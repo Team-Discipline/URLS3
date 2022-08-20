@@ -22,9 +22,17 @@ ALLOWED_HOSTS = ['*']
 
 INSTALLED_APPS = [
     # apps we made
+    'login.apps.LoginConfig',
 
     # apps we installed
     'rest_framework',
+    'rest_framework.authtoken',
+    'drf_yasg',
+    'rest_framework_simplejwt.token_blacklist',
+    'allauth',
+    'allauth.account',
+    'dj_rest_auth',
+    'dj_rest_auth.registration',
 
     # django
     'django.contrib.admin',
