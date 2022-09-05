@@ -4,7 +4,7 @@ from user_profile.views import UserProfileViewSet, ImageViewSet
 
 router = DefaultRouter()
 
-router.register('image', ImageViewSet, basename='user_profile_image')
-router.register('', UserProfileViewSet, basename='user_profile')
+router.register('image', ImageViewSet)
+router.register('', UserProfileViewSet)
 
 urlpatterns = router.urls

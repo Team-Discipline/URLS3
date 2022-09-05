@@ -13,11 +13,7 @@ class ImageSerializer(serializers.ModelSerializer):
 
 class UserProfileSerializer(serializers.HyperlinkedModelSerializer):
     user_id = serializers.PrimaryKeyRelatedField(many=False, read_only=True)
-    thumbnail = serializers.HyperlinkedRelatedField(many=False, read_only=True, view_name='image-detail')
 
     class Meta:
         model = UserProfile
-        fields = ['id', 'user_id', 'thumbnail', 'created_at', 'updated_at']
-        # extra_kwargs = {
-        #     'thumbnail': {'view_name': 'thumbnail:image-detail'}
-        # }
+        fields = ['user_id', 'thumbnail', 'created_at', 'updated_at']
