@@ -3,3 +3,7 @@ djangorestframework
 mysqlclient
 whitenoise
 python-dotenv
+djangorestframework-simplejwt[crypto]
+drf-yasg[validation]
+dj-rest-auth
+django-allauth
