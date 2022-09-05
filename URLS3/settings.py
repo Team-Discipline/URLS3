@@ -26,6 +26,7 @@ INSTALLED_APPS = [
     # apps we made
     'login.apps.LoginConfig',
     'user_profile.apps.UserProfileConfig',
+    'analytics.apps.AnalyticsConfig',
 
     # apps we installed
     'rest_framework',
