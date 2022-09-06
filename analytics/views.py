@@ -11,7 +11,7 @@ class AnalyticsViewSet(mixins.RetrieveModelMixin,
     """
     This is only for when user requested urls' analytics data.
     """
-    queryset = CapturedData
+    queryset = CapturedData.objects.all()
     serializer_class = GetCapturedDataSerializer
     http_method_names = ['get', 'delete']
 
@@ -20,6 +20,6 @@ class CollectDataViewSet(viewsets.ModelViewSet):
     """
     This view is intend to be used when JS file collect user data.
     """
-    queryset = CapturedData
+    queryset = CapturedData.objects.all()
     serializer_class = CreateCapturedDataSerializer
     http_method_names = ['post']
