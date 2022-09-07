@@ -25,6 +25,9 @@ ALLOWED_HOSTS = ['*']
 INSTALLED_APPS = [
     # apps we made
     'login.apps.LoginConfig',
+    'user_profile.apps.UserProfileConfig',
+    'analytics.apps.AnalyticsConfig',
+    'S3.apps.S3Config',
 
     # apps we installed
     'rest_framework',
@@ -126,6 +129,9 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 STATIC_ROOT = BASE_DIR / 'static/'
+
+MEDIA_URL = 'media/'
+MEDIA_ROOT = BASE_DIR / 'media/'
 
 # https://whitenoise.evans.io/en/stable/
 
