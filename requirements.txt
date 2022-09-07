@@ -8,3 +8,5 @@ drf-yasg[validation]
 dj-rest-auth
 django-allauth
 Pillow
+boto3
+django-storages
