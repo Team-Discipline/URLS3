@@ -2,9 +2,13 @@ from django.conf.global_settings import AUTH_USER_MODEL
 from django.db import models
 
 
+def upload_img(instance, filename):
+    return f'media/profile_image/user_{instance.uploaded_by.id}/{filename}'
+
+
 class Image(models.Model):
     uploaded_by = models.ForeignKey(AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='uploaded_image')
-    image = models.ImageField(upload_to='images')
+    image = models.ImageField(upload_to=upload_img)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
