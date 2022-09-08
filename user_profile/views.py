@@ -1,4 +1,4 @@
-from rest_framework import viewsets, permissions, status
+from rest_framework import viewsets, permissions
 from rest_framework.parsers import MultiPartParser
 from rest_framework.request import Request
 from rest_framework.response import Response
@@ -8,42 +8,58 @@ from user_profile.serializers import UserProfileSerializer, ImageSerializer
 
 
 class ImageViewSet(viewsets.ModelViewSet):
+    """
+    이미지 수정을 원하면 계속 `POST`하면 됩니다.
+    기존 이미지는 삭제 됩니다.
+    `PATCH /profile/{user_id}/`로 프로필을 업데이트 하지 않으면,
+    `GET /profile/`, `GET /profile/{user_id}/`에 사진이 뜨지 않습니다.
+    """
     queryset = Image.objects.all()
     serializer_class = ImageSerializer
     permission_classes = [permissions.IsAuthenticated]
     parser_classes = [MultiPartParser]
-    http_method_names = ['post', 'get', 'put', 'delete']
+    http_method_names = ['post', 'get', 'delete']
 
     def perform_create(self, serializer):
         serializer.save(uploaded_by=self.request.user)
 
+    def create(self, request, *args, **kwargs):
+        try:
+            image = Image.objects.get(uploaded_by=self.request.user)
+            image.delete()
+        except Image.DoesNotExist:
+            ...
+        return super().create(request, *args, **kwargs)
+
 
 class UserProfileViewSet(viewsets.ModelViewSet):
+    """
+    `POST /profile/image/`에 업로드하면 알아서 `thumbnail` field가 채워집니다.
+    하지만 반드시 `POST /profile/`을 불러야 프로필이 생성이 됩니다.
+    """
     queryset = UserProfile.objects.all()
     serializer_class = UserProfileSerializer
     permission_classes = [permissions.IsAuthenticated]
-    http_method_names = ['get', 'post', 'patch', 'delete']
+    http_method_names = ['get', 'post', 'delete']
     lookup_field = 'user_id'
 
     def create(self, request: Request, *args, **kwargs):
-        """
-        먼저 `POST /profile/image/`에서 이미지 url을 생성하고
-        그 다음에 그 url을 `thumbnail`에 넣어서 request해주세요.
-        """
-        user = self.request.user
-        url = request.data.get('thumbnail')
-        print(f'url: {url}')
+        # Find image uploaded by user.
+        # If not found anything, Just put `None` to `UserProfile`.
+        try:
+            image = Image.objects.get(uploaded_by=self.request.user)
+        except Image.DoesNotExist:
+            image = None
+            ...
 
-        # thumbnail = Image.objects.get(image=url)
-        # print(f'thumbnail: {thumbnail}')
+        # If already user's profile exists, Delete it.
+        try:
+            p = UserProfile.objects.get(user=self.request.user)
+            p.delete()
+        except UserProfile.DoesNotExist:
+            ...
 
-        # profile = UserProfile(user_id=user.pk, thumbnail_url=url)
-        # profile.save()
-
-        # s = UserProfileSerializer(profile)
-        s = UserProfileSerializer(data=request.data)
-        if s.is_valid():
-            s.save()
-            return Response(s.data)
-        else:
-            return Response(s.errors, status=status.HTTP_400_BAD_REQUEST)
+        profile = UserProfile(user=self.request.user, thumbnail=image)
+        profile.save()
+        s = UserProfileSerializer(profile, context={'request': request})
+        return Response(s.data)
