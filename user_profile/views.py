@@ -1,5 +1,4 @@
-from rest_framework import viewsets, permissions
-from rest_framework.generics import get_object_or_404
+from rest_framework import viewsets, permissions, status
 from rest_framework.parsers import MultiPartParser
 from rest_framework.request import Request
 from rest_framework.response import Response
@@ -29,17 +28,22 @@ class UserProfileViewSet(viewsets.ModelViewSet):
     def create(self, request: Request, *args, **kwargs):
         """
         먼저 `POST /profile/image/`에서 이미지 url을 생성하고
-        그 다음에 그 url을 `thumbnail_url`에 넣어서 request해주세요.
+        그 다음에 그 url을 `thumbnail`에 넣어서 request해주세요.
         """
         user = self.request.user
-        url = request.data.get('thumbnail_url')
+        url = request.data.get('thumbnail')
+        print(f'url: {url}')
 
-        thumbnail = get_object_or_404(Image.objects.get(image__in=url))
-        print(f'thumbnail: {thumbnail}')
+        # thumbnail = Image.objects.get(image=url)
+        # print(f'thumbnail: {thumbnail}')
 
-        profile = UserProfile(user_id=user.pk, thumbnail=thumbnail)
-        profile.save()
+        # profile = UserProfile(user_id=user.pk, thumbnail_url=url)
+        # profile.save()
 
-        s = UserProfileSerializer(profile)
-
-        return Response(s.data)
+        # s = UserProfileSerializer(profile)
+        s = UserProfileSerializer(data=request.data)
+        if s.is_valid():
+            s.save()
+            return Response(s.data)
+        else:
+            return Response(s.errors, status=status.HTTP_400_BAD_REQUEST)
