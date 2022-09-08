@@ -1,4 +1,5 @@
 from rest_framework import viewsets, permissions
+from rest_framework.generics import get_object_or_404
 from rest_framework.parsers import MultiPartParser
 from rest_framework.request import Request
 from rest_framework.response import Response
@@ -31,11 +32,12 @@ class UserProfileViewSet(viewsets.ModelViewSet):
         그 다음에 그 url을 `thumbnail_url`에 넣어서 request해주세요.
         """
         user = self.request.user
-        print(f'requested user: {user}')
         url = request.data.get('thumbnail_url')
-        print(f'url: {url}')
 
-        profile = UserProfile(user_id=user.pk, thumbnail=url)
+        thumbnail = get_object_or_404(Image.objects.get(image__in=url))
+        print(f'thumbnail: {thumbnail}')
+
+        profile = UserProfile(user_id=user.pk, thumbnail=thumbnail)
         profile.save()
 
         s = UserProfileSerializer(profile)
