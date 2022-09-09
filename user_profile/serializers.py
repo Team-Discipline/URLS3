@@ -13,6 +13,7 @@ class ImageSerializer(serializers.ModelSerializer):
 
 class UserProfileSerializer(serializers.HyperlinkedModelSerializer):
     user_id = serializers.PrimaryKeyRelatedField(many=False, read_only=True)
+    thumbnail = serializers.HyperlinkedRelatedField(many=False, read_only=True, view_name='image-detail')
 
     class Meta:
         model = UserProfile
