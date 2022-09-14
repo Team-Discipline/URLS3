@@ -60,6 +60,7 @@ MIDDLEWARE = [
     "whitenoise.middleware.WhiteNoiseMiddleware",
 ]
 
+
 ROOT_URLCONF = 'URLS3.urls'
 
 TEMPLATES = [
