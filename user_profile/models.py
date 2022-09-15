@@ -18,7 +18,7 @@ class Image(models.Model):
 
 class UserProfile(models.Model):
     user = models.OneToOneField(AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='profile')
-    thumbnail = models.ForeignKey(Image, on_delete=models.SET_NULL, null=True)
+    thumbnail = models.ForeignKey(Image, on_delete=models.SET_NULL, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
