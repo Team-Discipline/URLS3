@@ -21,3 +21,18 @@ class S3ViewSet(viewsets.ModelViewSet):
 
         self.queryset = S3.objects.filter(issuer=request.user)
         return super().list(request, *args, **kwargs)
+
+    def create(self, request: Request, *args, **kwargs):
+        target_url = request.data['target_url']
+        print(f'target_url: {target_url}')
+        s3 = S3(issuer=request.user, target_url=target_url)
+        s = S3Serializer(s3, context={'request': request})
+
+        '''
+        Here to inject `security` checks and some of validations. 
+        '''
+
+        s3.s3_url = 'https://test.url/'
+
+        s3.save()
+        return Response(s.data)
