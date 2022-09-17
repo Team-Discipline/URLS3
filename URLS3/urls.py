@@ -17,6 +17,7 @@ schema_view = get_schema_view(
     public=False,
     permission_classes=[permissions.IsAuthenticated],
 )
+from urlvalidator import views
 
 urlpatterns = [
     path(f"{os.getenv('DJANGO_REAL_ADMIN')}", admin.site.urls),
@@ -27,7 +28,7 @@ urlpatterns = [
     path('profile/', include('user_profile.urls')),
     path('analytics/', include('analytics.urls')),
     path('s3/', include('S3.urls')),
-    # path('urlvalidator/', include('urlvalidation.urls'))
+    path('urlvalidator/', views.URLValidationViewSet, name='urlvalidator')
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
