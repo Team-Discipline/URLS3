@@ -25,6 +25,7 @@ CORS_ORIGIN_WHITELIST = [
     'https://localhost:3000',
     'http://127.0.0.1:3000',
     'https://127.0.0.1:3000',
+    'https://urls3.kreimben.com'
 ]
 CORS_ALLOW_CREDENTIALS = True
 
