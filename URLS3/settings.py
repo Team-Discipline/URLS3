@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'user_profile.apps.UserProfileConfig',
     'analytics.apps.AnalyticsConfig',
     'S3.apps.S3Config',
+    'urlvalidator.apps.UrlvalidationConfig',
 
     # apps we installed
     'rest_framework',

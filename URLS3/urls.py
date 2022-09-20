@@ -28,6 +28,7 @@ urlpatterns = [
     path('profile/', include('user_profile.urls')),
     path('analytics/', include('analytics.urls')),
     path('s3/', include('S3.urls')),
+    path('urlvalidation/', include('urlvalidator.urls'))
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
