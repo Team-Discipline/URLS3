@@ -13,4 +13,4 @@ RUN apt-get update && \
 
 #CMD ["gunicorn", "xlack.asgi:application", "-k", "uvicorn.workers.UvicornWorker", "-b", "0.0.0.0", "-p", "8000"]
 #CMD ["gunicorn", "xlack.wsgi"]
-CMD ["daphne", "-b", "0.0.0.0", "-p", "8000", "URLS3.wsgi:application"]
+#CMD ["daphne", "-b", "0.0.0.0", "-p", "8000", "URLS3.wsgi:application"]
