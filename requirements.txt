@@ -1,5 +1,13 @@
 django
 djangorestframework
 mysqlclient
-whitenoise
 python-dotenv
+djangorestframework-simplejwt[crypto]
+drf-yasg[validation]
+dj-rest-auth
+django-allauth
+Pillow
+boto3
+django-storages
+django-cors-headers
+geoip2
