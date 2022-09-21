@@ -42,9 +42,12 @@ class CollectDataViewSet(viewsets.ModelViewSet):
         ip_address = self._get_client_ip(request)
 
         g = GeoIP2()
-        location = g.city(ip_address)
+        ## location = g.city(ip_address)
+        location = g.city('119.70.20.184')
 
         print(f'data: {request.data}')
+
+         # g.city()로 안될 때 예외처리 해주기.
 
         c = CapturedData(
             ip_address=ip_address,
