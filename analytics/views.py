@@ -1,3 +1,5 @@
+from django.contrib.gis.geoip2 import GeoIP2
+from geoip2.errors import AddressNotFoundError
 from rest_framework import viewsets, mixins
 from rest_framework.request import Request
 from rest_framework.response import Response
@@ -6,7 +8,6 @@ from rest_framework.viewsets import GenericViewSet
 from analytics.models import CapturedData
 from analytics.serializers import CreateCapturedDataSerializer, GetCapturedDataSerializer
 
-from django.contrib.gis.geoip2 import GeoIP2
 
 class AnalyticsViewSet(mixins.RetrieveModelMixin,
                        mixins.DestroyModelMixin,
@@ -42,12 +43,18 @@ class CollectDataViewSet(viewsets.ModelViewSet):
         ip_address = self._get_client_ip(request)
 
         g = GeoIP2()
-        ## location = g.city(ip_address)
-        location = g.city('119.70.20.184')
+        try:
+            location = g.city(ip_address)
 
-        print(f'data: {request.data}')
-
-         # g.city()로 안될 때 예외처리 해주기.
+            country = location["country_name"]
+            city = location["city"]
+            latitude = location["latitude"]
+            longitude = location["longitude"]
+        except AddressNotFoundError as _:
+            country = None
+            city = None
+            latitude = None
+            longitude = None
 
         c = CapturedData(
             ip_address=ip_address,
@@ -55,10 +62,10 @@ class CollectDataViewSet(viewsets.ModelViewSet):
             page_loaded_time=request.data['page_loaded_time'],
             page_leave_time=request.data['page_leave_time'],
             referer_url=request.data['referer_url'],
-            country=location["country_name"],
-            city=location["city"],
-            latitude=location["latitude"],
-            longitude=location["longitude"],
+            country=country,
+            city=city,
+            latitude=latitude,
+            longitude=longitude,
         )
 
         c.save()

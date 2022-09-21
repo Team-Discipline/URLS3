@@ -71,7 +71,6 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 
     'corsheaders.middleware.CorsMiddleware',
-    'geoip2_extras.middleware.GeoIP2Middleware',
 ]
 
 ROOT_URLCONF = 'URLS3.urls'
