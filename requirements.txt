@@ -11,6 +11,5 @@ boto3
 django-storages
 django-cors-headers
 geoip2
-Twisted[tls,http2]
-daphne
 gunicorn
+uvicorn
