@@ -31,7 +31,8 @@ CORS_ALLOW_CREDENTIALS = True
 
 # https://docs.djangoproject.com/en/4.1/ref/settings/#std-setting-CSRF_TRUSTED_ORIGINS
 CSRF_TRUSTED_ORIGINS = [
-    'https://api.urls3.kreimben.com'
+    'https://api.urls3.kreimben.com',
+    'http://api.urls3.kreimben.com'
 ]
 
 # Application definition
