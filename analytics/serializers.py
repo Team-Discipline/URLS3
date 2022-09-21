@@ -6,7 +6,7 @@ from analytics.models import CapturedData
 class CreateCapturedDataSerializer(serializers.ModelSerializer):
     class Meta:
         model = CapturedData
-        exclude = ['id', 'ip_address']  # 's3']
+        exclude = ['id', 'ip_address', 'country', 'city', 'latitude', 'longitude']  # 's3']
 
 
 class GetCapturedDataSerializer(serializers.ModelSerializer):

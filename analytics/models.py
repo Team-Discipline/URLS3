@@ -16,3 +16,9 @@ class CapturedData(models.Model):
     referer_url = models.URLField()
     # When `this` model is created. This field is created automatically.
     created_at = models.DateTimeField(auto_now_add=True)
+
+    # User's location information
+    country = models.CharField(max_length=1000, null=True, blank=True)
+    city = models.CharField(max_length=1000, null=True, blank=True)
+    latitude = models.FloatField(null=True, blank=True)
+    longitude = models.FloatField(null=True, blank=True)

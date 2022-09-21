@@ -1,3 +1,5 @@
+from django.contrib.gis.geoip2 import GeoIP2
+from geoip2.errors import AddressNotFoundError
 from rest_framework import viewsets, mixins
 from rest_framework.request import Request
 from rest_framework.response import Response
@@ -39,14 +41,31 @@ class CollectDataViewSet(viewsets.ModelViewSet):
 
     def create(self, request: Request, *args, **kwargs):
         ip_address = self._get_client_ip(request)
-        print(f'data: {request.data}')
+
+        g = GeoIP2()
+        try:
+            location = g.city(ip_address)
+
+            country = location["country_name"]
+            city = location["city"]
+            latitude = location["latitude"]
+            longitude = location["longitude"]
+        except AddressNotFoundError as _:
+            country = None
+            city = None
+            latitude = None
+            longitude = None
 
         c = CapturedData(
             ip_address=ip_address,
             js_reqeust_time_UTC=request.data['js_reqeust_time_UTC'],
             page_loaded_time=request.data['page_loaded_time'],
             page_leave_time=request.data['page_leave_time'],
-            referer_url=request.data['referer_url']
+            referer_url=request.data['referer_url'],
+            country=country,
+            city=city,
+            latitude=latitude,
+            longitude=longitude,
         )
 
         c.save()

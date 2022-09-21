@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'dj_rest_auth',
     'dj_rest_auth.registration',
     'corsheaders',
+    'geoip2',
 
     # django
     'django.contrib.admin',
@@ -220,3 +221,5 @@ ACCOUNT_AUTHENTICATION_METHOD = 'username'
 ACCOUNT_USERNAME_REQUIRED = True
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_UNIQUE_EMAIL = True
+
+GEOIP_PATH = os.path.join('geoip')
