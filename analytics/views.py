@@ -6,6 +6,7 @@ from rest_framework.viewsets import GenericViewSet
 from analytics.models import CapturedData
 from analytics.serializers import CreateCapturedDataSerializer, GetCapturedDataSerializer
 
+from django.contrib.gis.geoip2 import GeoIP2
 
 class AnalyticsViewSet(mixins.RetrieveModelMixin,
                        mixins.DestroyModelMixin,
@@ -39,6 +40,10 @@ class CollectDataViewSet(viewsets.ModelViewSet):
 
     def create(self, request: Request, *args, **kwargs):
         ip_address = self._get_client_ip(request)
+
+        g = GeoIP2()
+        location = g.city(ip_address)
+
         print(f'data: {request.data}')
 
         c = CapturedData(
@@ -46,7 +51,11 @@ class CollectDataViewSet(viewsets.ModelViewSet):
             js_reqeust_time_UTC=request.data['js_reqeust_time_UTC'],
             page_loaded_time=request.data['page_loaded_time'],
             page_leave_time=request.data['page_leave_time'],
-            referer_url=request.data['referer_url']
+            referer_url=request.data['referer_url'],
+            country=location["country_name"],
+            city=location["city"],
+            latitude=location["latitude"],
+            longitude=location["longitude"],
         )
 
         c.save()
