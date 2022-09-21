@@ -7,6 +7,7 @@ from django.urls import path, include
 from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 from rest_framework import permissions
+import urlvalidator
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -17,7 +18,6 @@ schema_view = get_schema_view(
     public=False,
     permission_classes=[permissions.IsAuthenticated],
 )
-from urlvalidator import views
 
 urlpatterns = [
     path(f"{os.getenv('DJANGO_REAL_ADMIN')}", admin.site.urls),
@@ -28,7 +28,8 @@ urlpatterns = [
     path('profile/', include('user_profile.urls')),
     path('analytics/', include('analytics.urls')),
     path('s3/', include('S3.urls')),
-    path('urlvalidation/', include('urlvalidator.urls'))
+    path('urlvalidation/', urlvalidator.views.as_view({'get': 'list', },
+                                                      'is_valid_url'))
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
