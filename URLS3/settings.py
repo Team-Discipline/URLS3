@@ -25,6 +25,7 @@ CORS_ORIGIN_WHITELIST = [
     'https://localhost:3000',
     'http://127.0.0.1:3000',
     'https://127.0.0.1:3000',
+    'https://urls3.kreimben.com'
 ]
 CORS_ALLOW_CREDENTIALS = True
 
@@ -42,12 +43,14 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'drf_yasg',
     'rest_framework_simplejwt.token_blacklist',
+    'rest_framework_simplejwt',
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
     'dj_rest_auth',
     'dj_rest_auth.registration',
     'corsheaders',
+    'geoip2',
 
     # django
     'django.contrib.admin',
@@ -218,3 +221,5 @@ ACCOUNT_AUTHENTICATION_METHOD = 'username'
 ACCOUNT_USERNAME_REQUIRED = True
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_UNIQUE_EMAIL = True
+
+GEOIP_PATH = os.path.join('geoip')
