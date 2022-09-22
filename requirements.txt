@@ -13,3 +13,5 @@ django-cors-headers
 geoip2
 gunicorn
 uvicorn
+daphne
+Twisted[tls,http2]
