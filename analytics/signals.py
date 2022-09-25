@@ -9,7 +9,7 @@ print('django signal loaded!')
 
 @receiver(post_save, sender=CapturedData)
 def validate_data_and_create_unique_visitors(sender: CapturedData, instance: CapturedData, *args, **kwargs):
-    latest = CapturedData.objects.filter(s3=instance.s3).order_by('-created_at')[1]
+    latest = CapturedData.objects.filter(s3=instance.s3, ip_address=instance.ip_address).order_by('-created_at')[1]
 
     if latest.created_at + timedelta(minutes=30) < instance.created_at:
         UniqueVisitor(data=instance).save()
