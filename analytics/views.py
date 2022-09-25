@@ -1,25 +1,25 @@
 from django.contrib.gis.geoip2 import GeoIP2
 from geoip2.errors import AddressNotFoundError
-from rest_framework import viewsets, mixins
+from rest_framework import viewsets, generics
 from rest_framework.request import Request
 from rest_framework.response import Response
-from rest_framework.viewsets import GenericViewSet
 
 from S3.models import S3
 from analytics.models import CapturedData
 from analytics.serializers import CreateCapturedDataSerializer, GetCapturedDataSerializer
 
 
-class AnalyticsViewSet(mixins.RetrieveModelMixin,
-                       mixins.DestroyModelMixin,
-                       GenericViewSet):
+class AnalyticsViewSet(generics.ListAPIView):
     """
     This is only for when user requested urls' analytics data.
     """
     queryset = CapturedData.objects.all()
     serializer_class = GetCapturedDataSerializer
     http_method_names = ['get']
-    lookup_field = 's3'
+    lookup_field = 's3_id'  # That doesn't work! I don't even know...
+
+    def get_queryset(self):
+        return CapturedData.objects.filter(s3_id=self.kwargs['s3_id'])
 
 
 class CollectDataViewSet(viewsets.ModelViewSet):

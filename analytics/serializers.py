@@ -13,7 +13,7 @@ class CreateCapturedDataSerializer(serializers.HyperlinkedModelSerializer):
         exclude = ['ip_address', 'country', 'city', 'latitude', 'longitude', 'url']
 
 
-class GetCapturedDataSerializer(serializers.HyperlinkedModelSerializer):
+class GetCapturedDataSerializer(serializers.ModelSerializer):
     ip_address = serializers.IPAddressField()
 
     class Meta:
