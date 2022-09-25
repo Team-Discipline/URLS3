@@ -1,5 +1,5 @@
-// const base_url = `https://api.urls3.kreimben.com`;
-const base_url = `http://localhost:8000`;
+const base_url = `https://api.urls3.kreimben.com`;
+// const base_url = `http://localhost:8000`;
 
 const get_utc_time = () => {
     let date = new Date();
@@ -32,6 +32,7 @@ window.onbeforeunload = () => {
 const make_clean = () => {
     console.log(`on make_clean function`);
     const body_content = {
+        "s3": window.location,
         "js_reqeust_time_UTC": initial_loaded_time,
         "page_loaded_time": page_loaded_time,
         "page_leave_time": page_leave_time,
@@ -46,7 +47,7 @@ const make_clean = () => {
         body: JSON.stringify(body_content)
     }
     console.log(`fetch_init: ${JSON.stringify(fetch_init)}`);
-    fetch(`${base_url}/analytics/collect/`,
+    fetch(`${base_url}/collect/`,
         fetch_init
     )
         .then(res => res.json())
