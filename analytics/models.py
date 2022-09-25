@@ -26,3 +26,15 @@ class CapturedData(models.Model):
 
     def __str__(self):
         return f'{self.ip_address}'
+
+
+class UniqueVisitor(models.Model):
+    """
+    There is no way to input to this model.
+    This model will be filled automatically.
+    """
+    data = models.ForeignKey(CapturedData, on_delete=models.CASCADE, related_name='unique_visitors')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'{self.data.ip_address} on {self.data.created_at}'
