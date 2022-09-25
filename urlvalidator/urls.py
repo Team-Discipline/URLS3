@@ -1,10 +1,10 @@
 from rest_framework.routers import DefaultRouter
 
 import urlvalidator.views
-from urlvalidator.views import is_valid_url
+from urlvalidator.views import ValidateUrl
 
 router = DefaultRouter()
 
-router.register('url', urlvalidator.views.is_valid_url(), basename='url')
+router.register('url', ValidateUrl, basename='url')
 
 urlpatterns = router.urls

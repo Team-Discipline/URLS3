@@ -5,7 +5,7 @@ from rest_framework.response import Response
 
 from S3.models import S3
 from S3.serializers import S3Serializer
-from urlvalidator.views import is_valid_url
+from urlvalidator.views import ValidateUrl
 
 class S3ViewSet(viewsets.ModelViewSet):
     """
@@ -28,7 +28,7 @@ class S3ViewSet(viewsets.ModelViewSet):
         s3 = S3(issuer=request.user, target_url=target_url)
         s = S3Serializer(s3, context={'request': request})
 
-        is_valid_url(request)
+        ValidateUrl.is_valid_url(request)
         '''
         Here to inject `security` checks and some of validations. 
         '''
