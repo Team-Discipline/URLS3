@@ -5,7 +5,7 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 
 from S3.models import S3
-from analytics.models import CapturedData
+from analytics.models import CapturedData, UniqueVisitor
 from analytics.serializers import CreateCapturedDataSerializer, GetCapturedDataSerializer
 
 
@@ -87,3 +87,10 @@ class CollectDataViewSet(viewsets.ModelViewSet):
 
         s = CreateCapturedDataSerializer(c, context={'request': request})
         return Response(s.data)
+
+
+class UniqueVisitorsViewSet(generics.ListAPIView):
+    queryset = UniqueVisitor.objects.all()
+    serializer_class = GetCapturedDataSerializer
+    http_method_names = ['get']
+    lookup_field = 's3_id'
