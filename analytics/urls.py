@@ -1,10 +1,7 @@
-from rest_framework.routers import DefaultRouter
+from django.urls import path
 
-from analytics.views import AnalyticsViewSet, CollectDataViewSet
+from analytics.views import AnalyticsViewSet
 
-router = DefaultRouter()
-
-router.register('collect', CollectDataViewSet, basename='captureddata')
-router.register('', AnalyticsViewSet, basename='analytics')
-
-urlpatterns = router.urls
+urlpatterns = [
+    path('<int:s3_id>/', AnalyticsViewSet.as_view())
+]
