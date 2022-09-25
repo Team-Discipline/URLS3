@@ -24,6 +24,9 @@ class CapturedData(models.Model):
     latitude = models.FloatField(null=True, blank=True)
     longitude = models.FloatField(null=True, blank=True)
 
+    class Meta:
+        ordering = ('-created_at',)
+
     def __str__(self):
         return f'{self.ip_address}'
 
