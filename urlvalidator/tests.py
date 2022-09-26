@@ -8,5 +8,5 @@ from urlvalidator.models import URLModel
 
 class URLvalidationTestCase(TestCase):
     def test_url_validation(self):
-        url = URLModel.objects.create(url="https://www.google.com/?gws_rd=ssl")
-        ValidateUrl.is_valid_url(url)
+        url1 = URLModel(url="https://www.google.com/?gws_rd=ssl").save()
+        ValidateUrl.is_valid_url(self, url1)
