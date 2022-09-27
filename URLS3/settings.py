@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'user_profile.apps.UserProfileConfig',
     'analytics.apps.AnalyticsConfig',
     'S3.apps.S3Config',
+    'access_key.apps.AccessKeyConfig',
 
     # apps we installed
     'rest_framework',
@@ -56,6 +57,7 @@ INSTALLED_APPS = [
     'dj_rest_auth.registration',
     'corsheaders',
     'geoip2',
+    'rest_framework_api_key',
 
     # django
     'django.contrib.admin',

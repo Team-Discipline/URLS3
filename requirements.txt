@@ -13,3 +13,4 @@ django-cors-headers
 geoip2
 Twisted[tls,http2]
 daphne
+djangorestframework-api-key
