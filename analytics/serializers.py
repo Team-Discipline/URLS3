@@ -1,12 +1,16 @@
 from rest_framework import serializers
 
+from S3.models import S3
 from analytics.models import CapturedData
 
 
-class CreateCapturedDataSerializer(serializers.ModelSerializer):
+class CreateCapturedDataSerializer(serializers.HyperlinkedModelSerializer):
+    s3 = serializers.HyperlinkedRelatedField(view_name='s3-detail',
+                                             queryset=S3.objects.all())
+
     class Meta:
         model = CapturedData
-        exclude = ['id', 'ip_address', 'country', 'city', 'latitude', 'longitude']  # 's3']
+        exclude = ['ip_address', 'country', 'city', 'latitude', 'longitude', 'url']
 
 
 class GetCapturedDataSerializer(serializers.ModelSerializer):

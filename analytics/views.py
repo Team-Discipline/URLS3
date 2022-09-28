@@ -1,23 +1,25 @@
 from django.contrib.gis.geoip2 import GeoIP2
 from geoip2.errors import AddressNotFoundError
-from rest_framework import viewsets, mixins
+from rest_framework import viewsets, generics
 from rest_framework.request import Request
 from rest_framework.response import Response
-from rest_framework.viewsets import GenericViewSet
 
-from analytics.models import CapturedData
+from S3.models import S3
+from analytics.models import CapturedData, UniqueVisitor
 from analytics.serializers import CreateCapturedDataSerializer, GetCapturedDataSerializer
 
 
-class AnalyticsViewSet(mixins.RetrieveModelMixin,
-                       mixins.DestroyModelMixin,
-                       GenericViewSet):
+class AnalyticsViewSet(generics.ListAPIView):
     """
     This is only for when user requested urls' analytics data.
     """
     queryset = CapturedData.objects.all()
     serializer_class = GetCapturedDataSerializer
-    http_method_names = ['get', 'delete']
+    http_method_names = ['get']
+    lookup_field = 's3_id'  # That doesn't work! I don't even know...
+
+    def get_queryset(self):
+        return CapturedData.objects.filter(s3_id=self.kwargs['s3_id'])
 
 
 class CollectDataViewSet(viewsets.ModelViewSet):
@@ -40,6 +42,11 @@ class CollectDataViewSet(viewsets.ModelViewSet):
         return ip
 
     def create(self, request: Request, *args, **kwargs):
+        """
+        s3필드에 s3주소(s3_url)를 입력 하면 됩니다.
+        s3주소란? 실제로 단축된 url을 말함.
+        제대로 된 url 주소를 입력 받지 못했을 때 403 오류가 납니다.
+        """
         ip_address = self._get_client_ip(request)
 
         g = GeoIP2()
@@ -56,7 +63,15 @@ class CollectDataViewSet(viewsets.ModelViewSet):
             latitude = None
             longitude = None
 
+        s3: str = request.data['s3']
+
+        try:
+            s3: S3 = S3.objects.get(s3_url=s3)
+        except S3.DoesNotExist:
+            return Response(data={'message': '입력받은 url로 s3를 찾을 수 없습니다.'})
+
         c = CapturedData(
+            s3=s3,
             ip_address=ip_address,
             js_reqeust_time_UTC=request.data['js_reqeust_time_UTC'],
             page_loaded_time=request.data['page_loaded_time'],
@@ -70,5 +85,12 @@ class CollectDataViewSet(viewsets.ModelViewSet):
 
         c.save()
 
-        s = CreateCapturedDataSerializer(c)
+        s = CreateCapturedDataSerializer(c, context={'request': request})
         return Response(s.data)
+
+
+class UniqueVisitorsViewSet(generics.ListAPIView):
+    queryset = UniqueVisitor.objects.all()
+    serializer_class = GetCapturedDataSerializer
+    http_method_names = ['get']
+    lookup_field = 's3_id'
