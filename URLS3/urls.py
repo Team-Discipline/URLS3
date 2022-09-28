@@ -1,7 +1,5 @@
 import os
 
-from django.conf import settings
-from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
 from drf_yasg import openapi
@@ -27,7 +25,5 @@ urlpatterns = [
     path('profile/', include('user_profile.urls')),
     path('analytics/', include('analytics.urls')),
     path('s3/', include('S3.urls')),
-    path('apikey/', include('access_key.urls')),
+    path('access_key/', include('access_key.urls')),
 ]
-
-urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
