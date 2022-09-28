@@ -1,5 +1,5 @@
 django
-djangorestframework==3.12.4
+djangorestframework
 mysqlclient
 python-dotenv
 djangorestframework-simplejwt[crypto]
