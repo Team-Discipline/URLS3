@@ -6,6 +6,8 @@ from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 from rest_framework import permissions
 
+from analytics.views import CollectDataViewSet
+
 schema_view = get_schema_view(
     openapi.Info(
         title="URLS3",
@@ -24,6 +26,7 @@ urlpatterns = [
     path('registration/', include('dj_rest_auth.registration.urls')),
     path('profile/', include('user_profile.urls')),
     path('analytics/', include('analytics.urls')),
+    path('collect/', CollectDataViewSet.as_view({'post': 'create'})),
     path('s3/', include('S3.urls')),
     path('access_key/', include('access_key.urls')),
 ]

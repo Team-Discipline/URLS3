@@ -1,5 +1,4 @@
-from rest_framework import viewsets, permissions, status
-from rest_framework.generics import get_object_or_404
+from rest_framework import viewsets, permissions, status, throttling
 from rest_framework.request import Request
 from rest_framework.response import Response
 
@@ -14,6 +13,7 @@ class S3ViewSet(viewsets.ModelViewSet):
     queryset = S3.objects.all()
     serializer_class = S3Serializer
     permission_classes = [permissions.IsAuthenticated]
+    throttle_classes = [throttling.UserRateThrottle]
 
     def list(self, request: Request, *args, **kwargs):
         if not request.user:

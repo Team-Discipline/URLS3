@@ -31,7 +31,8 @@ CORS_ALLOW_CREDENTIALS = True
 
 # https://docs.djangoproject.com/en/4.1/ref/settings/#std-setting-CSRF_TRUSTED_ORIGINS
 CSRF_TRUSTED_ORIGINS = [
-    'https://api.urls3.kreimben.com'
+    'https://api.urls3.kreimben.com',
+    'http://api.urls3.kreimben.com'
 ]
 
 # Application definition
@@ -187,6 +188,9 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.BasicAuthentication',
     ),
+    'DEFAULT_THROTTLE_RATES': {
+        'user': '10/second',
+    }
 }
 
 # https://django-rest-framework-simplejwt.readthedocs.io/en/latest/settings.html

@@ -1,5 +1,5 @@
 django
-djangorestframework
+djangorestframework==3.12.4
 mysqlclient
 python-dotenv
 djangorestframework-simplejwt[crypto]
@@ -11,6 +11,8 @@ boto3
 django-storages
 django-cors-headers
 geoip2
-Twisted[tls,http2]
+gunicorn
+uvicorn
 daphne
+Twisted[tls,http2]
 djangorestframework-api-key
