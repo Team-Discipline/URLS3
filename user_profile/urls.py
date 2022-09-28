@@ -8,3 +8,4 @@ router.register('image', ImageViewSet)
 router.register('', UserProfileViewSet)
 
 urlpatterns = router.urls
+

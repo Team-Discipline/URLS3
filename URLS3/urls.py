@@ -1,7 +1,5 @@
 import os
 
-from django.conf import settings
-from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
 from drf_yasg import openapi
@@ -30,6 +28,5 @@ urlpatterns = [
     path('analytics/', include('analytics.urls')),
     path('collect/', CollectDataViewSet.as_view({'post': 'create'})),
     path('s3/', include('S3.urls')),
+    path('access_key/', include('access_key.urls')),
 ]
-
-urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
