@@ -21,6 +21,8 @@ class GetCapturedDataSerializer(serializers.ModelSerializer):
 
 
 class UniqueVisitorSerializer(serializers.ModelSerializer):
+    data = GetCapturedDataSerializer()
+
     class Meta:
         model = UniqueVisitor
         fields = '__all__'
