@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from S3.models import S3
-from analytics.models import CapturedData
+from analytics.models import CapturedData, UniqueVisitor
 
 
 class CreateCapturedDataSerializer(serializers.HyperlinkedModelSerializer):
@@ -17,4 +17,10 @@ class GetCapturedDataSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CapturedData
+        fields = '__all__'
+
+
+class UniqueVisitorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UniqueVisitor
         fields = '__all__'
