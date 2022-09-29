@@ -1,38 +1,82 @@
-from rest_framework import viewsets, permissions, status, throttling
+from datetime import datetime
+
+from rest_framework import permissions, throttling, generics, status
+from rest_framework.generics import get_object_or_404
 from rest_framework.request import Request
 from rest_framework.response import Response
+from rest_framework_api_key.permissions import HasAPIKey
 
 from S3.models import S3
 from S3.serializers import S3Serializer
 
 
-class S3ViewSet(viewsets.ModelViewSet):
+class S3ViewSet(generics.ListCreateAPIView):
     """
     When you generate S3.
     """
     queryset = S3.objects.all()
     serializer_class = S3Serializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated | HasAPIKey]
     throttle_classes = [throttling.UserRateThrottle]
+    http_method_names = ['get', 'post', 'patch']
 
-    def list(self, request: Request, *args, **kwargs):
+    def get(self, request: Request, *args, **kwargs):
+        """
+        You can get only what you generated!
+        """
         if not request.user:
             return Response(status=status.HTTP_401_UNAUTHORIZED)
 
         self.queryset = S3.objects.filter(issuer=request.user)
-        return super().list(request, *args, **kwargs)
 
-    def create(self, request: Request, *args, **kwargs):
+        s = self.get_serializer(self.queryset, many=True, context={'request': request})
+
+        return Response(s.data)
+
+    def post(self, request: Request, *args, **kwargs):
         target_url = request.data['target_url']
-        print(f'target_url: {target_url}')
         s3 = S3(issuer=request.user, target_url=target_url)
         s = S3Serializer(s3, context={'request': request})
 
         '''
-        Here to inject `security` checks and some of validations. 
+        Here to inject `security` checks and some of validations.
         '''
 
-        s3.s3_url = 'https://test.url/'
+        s3.s3_url = f'https://test.url/{datetime.now()}'
 
         s3.save()
         return Response(s.data)
+
+
+class S3DeleteViewSet(generics.DestroyAPIView,
+                      generics.UpdateAPIView):
+    queryset = S3.objects.all()
+    serializer_class = S3Serializer
+    permission_classes = [permissions.IsAuthenticated | HasAPIKey]
+    http_method_names = ['patch', 'delete']
+
+    def update(self, request, *args, **kwargs):
+        s3_id = kwargs['s3_id']
+
+        if not s3_id:
+            return Response({'success': False, 'message': 'ID is not filled.'}, status=status.HTTP_404_NOT_FOUND)
+
+        s3 = get_object_or_404(S3, pk=s3_id)
+
+        s3.target_url = request.data.get('target_url')
+        s3.save()
+
+        s = self.get_serializer(s3)
+
+        return Response(s.data)
+
+    def delete(self, request: Request, *args, **kwargs):
+        s3_id = kwargs['s3_id']
+
+        if not s3_id:
+            return Response({'success': False, 'message': 'ID is not filled.'}, status=status.HTTP_404_NOT_FOUND)
+
+        s3 = get_object_or_404(S3, pk=s3_id)
+
+        s3.delete()
+        return Response({'success': True, 'message': 'Successfully deleted!'}, status=status.HTTP_200_OK)
