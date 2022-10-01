@@ -1,6 +1,6 @@
 import requests
 
-from S3.models import S3SecurityResult
+from S3.models import S3SecurityResult, S3
 
 
 class URLSecurityChecker:
@@ -8,10 +8,13 @@ class URLSecurityChecker:
     The class that check given url address' security.
     """
 
-    def __init__(self, url_address):
+    def __init__(self, s3_url, url_address):
         has_hsts = self._has_hsts(url_address)
 
-        self.result = S3SecurityResult(has_hsts=has_hsts)
+        s3 = S3.objects.get(s3_url=s3_url)
+        self.result = S3SecurityResult(s3=s3, has_hsts=has_hsts)
+
+        self.result.save()
 
     def _has_hsts(self, site) -> bool:
         try:
