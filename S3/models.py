@@ -19,6 +19,9 @@ class S3SecurityResult(models.Model):
     has_hsts = models.BooleanField()
 
     # has_xss_attack = models.BooleanField()
+    class Meta:
+        verbose_name = 'Security Result'
+        verbose_name_plural = 'Security Results'
 
     def __str__(self):
-        return f''
+        return f'{self.s3.issuer}\'s {self.s3.target_url}'
