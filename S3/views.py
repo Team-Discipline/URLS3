@@ -49,7 +49,7 @@ class S3ViewSet(generics.ListCreateAPIView):
             Here to inject `security` checks and some of validations.
             '''
             # TODO: Make it background tasks with celery.
-            URLSecurityChecker(kwargs['target_url'])
+            URLSecurityChecker(s.instance.s3_url, request.data['target_url'])
             return Response(s.validated_data)
         else:
             return Response(s.errors)
