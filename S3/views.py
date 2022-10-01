@@ -8,6 +8,7 @@ from rest_framework_api_key.permissions import HasAPIKey
 
 from S3.models import S3
 from S3.serializers import S3Serializer
+from S3.utils.URLSecurityChecker import URLSecurityChecker
 
 
 class S3ViewSet(generics.ListCreateAPIView):
@@ -35,11 +36,6 @@ class S3ViewSet(generics.ListCreateAPIView):
 
     def post(self, request: Request, *args, **kwargs):
 
-        '''
-        Here to inject `security` checks and some of validations.
-        '''
-        # URLSecurityChecker(target_url)
-
         """
         Here to generate S3 shortener url.
         """
@@ -49,6 +45,11 @@ class S3ViewSet(generics.ListCreateAPIView):
 
         if s.is_valid():
             s.save(issuer=request.user, s3_url=shortener_url)
+            '''
+            Here to inject `security` checks and some of validations.
+            '''
+            # TODO: Make it background tasks with celery.
+            URLSecurityChecker(kwargs['target_url'])
             return Response(s.validated_data)
         else:
             return Response(s.errors)
