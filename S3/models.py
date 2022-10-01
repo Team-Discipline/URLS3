@@ -15,8 +15,10 @@ class S3(models.Model):
 
 
 class S3SecurityResult(models.Model):
-    s3 = models.ForeignKey(S3, on_delete=models.CASCADE, related_name='security_result', blank=True, null=True)
+    s3 = models.ForeignKey(S3, on_delete=models.CASCADE, related_name='security_result')
     has_hsts = models.BooleanField()
+
+    # has_xss_attack = models.BooleanField()
 
     def __str__(self):
         return f''
