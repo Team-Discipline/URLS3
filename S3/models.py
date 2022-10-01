@@ -12,3 +12,11 @@ class S3(models.Model):
 
     def __str__(self):
         return f'{self.issuer}\'s {self.s3_url if self.s3_url is not None else self.target_url}'
+
+
+class S3SecurityResult(models.Model):
+    s3 = models.ForeignKey(S3, on_delete=models.CASCADE, related_name='security_result', blank=True, null=True)
+    has_hsts = models.BooleanField()
+
+    def __str__(self):
+        return f''

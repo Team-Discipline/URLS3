@@ -34,18 +34,29 @@ class S3ViewSet(generics.ListCreateAPIView):
         return Response(s.data)
 
     def post(self, request: Request, *args, **kwargs):
-        target_url = request.data['target_url']
-        s3 = S3(issuer=request.user, target_url=target_url)
-        s = S3Serializer(s3, context={'request': request})
+        # target_url = request.data['target_url']
+        # s3 = S3(issuer=request.user, target_url=target_url)
+        data = request.data
+        data['issuer_id'] = request.user.id
+        print(f'request data: {request.data}')
+
+        s = S3Serializer(data=request.data, context={'request': request})
 
         '''
         Here to inject `security` checks and some of validations.
         '''
+        # URLSecurityChecker(target_url)
 
-        s3.s3_url = f'https://test.url/{datetime.now()}'
+        """
+        Here to generate S3 shortener url.
+        """
+        s.s3_url = f'https://test.url/{datetime.now()}'
 
-        s3.save()
-        return Response(s.data)
+        if s.is_valid():
+            s.save()
+            return Response(s.data)
+        else:
+            return Response(s.errors)
 
 
 class S3DeleteViewSet(generics.DestroyAPIView,

@@ -16,3 +16,4 @@ uvicorn
 daphne
 Twisted[tls,http2]
 djangorestframework-api-key
+requests
