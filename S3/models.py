@@ -18,7 +18,6 @@ class S3SecurityResult(models.Model):
     s3 = models.ForeignKey(S3, on_delete=models.CASCADE, related_name='security_result')
     has_hsts = models.BooleanField()
 
-    # has_xss_attack = models.BooleanField()
     class Meta:
         verbose_name = 'Security Result'
         verbose_name_plural = 'Security Results'
