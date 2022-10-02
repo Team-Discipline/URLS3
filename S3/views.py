@@ -11,7 +11,7 @@ from S3.serializers import S3Serializer
 from S3.utils.URLSecurityChecker import URLSecurityChecker
 
 
-class S3ViewSet(generics.ListCreateAPIView):
+class S3CreateGetViewSet(generics.ListCreateAPIView):
     """
     When you generate S3.
     """
@@ -55,8 +55,8 @@ class S3ViewSet(generics.ListCreateAPIView):
             return Response(s.errors)
 
 
-class S3DeleteViewSet(generics.DestroyAPIView,
-                      generics.UpdateAPIView):
+class S3UpdateDeleteViewSet(generics.DestroyAPIView,
+                            generics.UpdateAPIView):
     queryset = S3.objects.all()
     serializer_class = S3Serializer
     permission_classes = [permissions.IsAuthenticated | HasAPIKey]
