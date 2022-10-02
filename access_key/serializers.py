@@ -1,11 +1,13 @@
 from rest_framework import serializers
 
-from rest_framework_api_key.models import APIKey
+from access_key.models import UsualAPIKey
 
 
 class AccessKeySerializer(serializers.ModelSerializer):
+    key = serializers.CharField(read_only=True)
+    revoked = serializers.BooleanField(read_only=True)
     expiry_date = serializers.DateTimeField(read_only=True)
 
     class Meta:
-        model = APIKey
-        fields = ['hashed_key', 'expiry_date']
+        model = UsualAPIKey
+        fields = ['key', 'revoked', 'expiry_date']
