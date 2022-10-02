@@ -1,35 +1,35 @@
 from datetime import datetime
 
-from rest_framework import permissions, throttling, generics, status
+import requests
+from rest_framework import throttling, generics, status
 from rest_framework.generics import get_object_or_404
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework_api_key.permissions import HasAPIKey
 
-from S3.models import S3
+from S3.models import S3, S3SecurityResult
 from S3.serializers import S3Serializer
+from S3.utils.FindUser import find_user
 from S3.utils.URLSecurityChecker import URLSecurityChecker
 
 
-class S3ViewSet(generics.ListCreateAPIView):
+class S3CreateGetViewSet(generics.ListCreateAPIView):
     """
     When you generate S3.
     """
     queryset = S3.objects.all()
     serializer_class = S3Serializer
-    permission_classes = [permissions.IsAuthenticated | HasAPIKey]
+    permission_classes = [IsAuthenticated | HasAPIKey]
     throttle_classes = [throttling.UserRateThrottle]
-    http_method_names = ['get', 'post', 'patch']
+    http_method_names = ['get', 'post']
 
     def get(self, request: Request, *args, **kwargs):
         """
         You can get only what you generated!
         """
-        if not request.user:
-            return Response(status=status.HTTP_401_UNAUTHORIZED)
-
-        self.queryset = S3.objects.filter(issuer=request.user)
-
+        user = find_user(request)
+        self.queryset = S3.objects.filter(issuer=user)
         s = self.get_serializer(self.queryset, many=True, context={'request': request})
 
         return Response(s.data)
@@ -44,22 +44,31 @@ class S3ViewSet(generics.ListCreateAPIView):
         s = S3Serializer(data=request.data, context={'request': request})
 
         if s.is_valid():
-            s.save(issuer=request.user, s3_url=shortener_url)
             '''
             Here to inject `security` checks and some of validations.
             '''
-            # TODO: Make it background tasks with celery.
-            URLSecurityChecker(s.instance.s3_url, request.data['target_url'])
-            return Response(s.validated_data)
+            try:
+                result: S3SecurityResult = URLSecurityChecker.check(request.data.get('target_url'))
+
+                user = find_user(request)
+                s.save(issuer=user, s3_url=shortener_url, security_result=result)
+
+                return Response(s.validated_data)
+            except requests.exceptions.ConnectionError:
+                return Response({
+                    'success': False,
+                    'message': 'Can not connect with your given url!'
+                }, status=status.HTTP_400_BAD_REQUEST)
         else:
             return Response(s.errors)
 
 
-class S3DeleteViewSet(generics.DestroyAPIView,
-                      generics.UpdateAPIView):
+class S3UpdateDeleteViewSet(generics.DestroyAPIView,
+                            generics.UpdateAPIView):
     queryset = S3.objects.all()
     serializer_class = S3Serializer
-    permission_classes = [permissions.IsAuthenticated | HasAPIKey]
+    permission_classes = [IsAuthenticated | HasAPIKey]
+    throttle_classes = [throttling.UserRateThrottle]
     http_method_names = ['patch', 'delete']
 
     def update(self, request, *args, **kwargs):

@@ -1,6 +1,6 @@
 import requests
 
-from S3.models import S3SecurityResult, S3
+from S3.models import S3SecurityResult
 
 
 class URLSecurityChecker:
@@ -8,24 +8,24 @@ class URLSecurityChecker:
     The class that check given url address' security.
     """
 
-    def __init__(self, s3_url, url_address):
-        has_hsts = self._has_hsts(url_address)
-
-        s3 = S3.objects.get(s3_url=s3_url)
-        self.result = S3SecurityResult(s3=s3, has_hsts=has_hsts)
-
-        self.result.save()
-
-    def _has_hsts(self, site) -> bool:
+    @staticmethod
+    def _has_hsts(site) -> bool:
         try:
-            req = requests.get(site)
+            res = requests.get(site)
         except requests.exceptions.SSLError:
             return False
         except requests.exceptions.MissingSchema:
             site = 'https://' + site
-            req = requests.get(site)
+            res = requests.get(site)
 
-        if 'strict-transport-security' in req.headers:
+        if 'strict-transport-security' in res.headers:
             return True
         else:
             return False
+
+    @staticmethod
+    def check(url_address) -> S3SecurityResult:
+        has_hsts = URLSecurityChecker._has_hsts(url_address)
+        result = S3SecurityResult(has_hsts=has_hsts)
+        result.save()
+        return result
