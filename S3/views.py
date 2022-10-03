@@ -35,7 +35,6 @@ class S3CreateGetViewSet(generics.ListCreateAPIView):
         return Response(s.data)
 
     def post(self, request: Request, *args, **kwargs):
-
         """
         Here to generate S3 shortener url.
         """
