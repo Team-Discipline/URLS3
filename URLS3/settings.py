@@ -23,6 +23,7 @@ ALLOWED_HOSTS = ['*']
 CORS_ORIGIN_WHITELIST = [
     'http://localhost:3000',
     'http://127.0.0.1:3000',
+    'http://urls3.kreimben.com',
     'https://urls3.kreimben.com'
 ]
 CORS_ALLOW_CREDENTIALS = True
