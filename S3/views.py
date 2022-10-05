@@ -51,8 +51,7 @@ class S3CreateGetViewSet(generics.ListCreateAPIView):
 
                 user = find_user(request)
                 s.save(issuer=user, s3_url=shortener_url, security_result=result)
-
-                return Response(s.validated_data)
+                return Response(s.data)
             except requests.exceptions.ConnectionError:
                 return Response({
                     'success': False,

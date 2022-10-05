@@ -10,7 +10,7 @@ class S3Serializer(serializers.ModelSerializer):
 
     class Meta:
         model = S3
-        fields = '__all__'
+        exclude = ['id', 'created_at', 'updated_at']
 
 
 class S3HyperlinkedSerializer(serializers.HyperlinkedModelSerializer):
