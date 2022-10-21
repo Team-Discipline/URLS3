@@ -37,6 +37,8 @@ class S3CreateGetViewSet(generics.ListCreateAPIView):
     def post(self, request: Request, *args, **kwargs):
         """
         Here to generate S3 shortener url.
+        두 단어의 조합으로 url을 단축하려면 `short_by_words`에 true를 넣으면 됨.
+        일반적인 hash키로 url을 단축하려면 `short_by_words`에 false를 넣으면 됨.
         """
         shortener_url = f'https://urls3.kreimben.com/{datetime.now()}'
 
