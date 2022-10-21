@@ -28,3 +28,15 @@ class S3(models.Model):
 
     def __str__(self):
         return f'{self.issuer}\'s shorten {self.target_url}'
+
+
+class Word(models.Model):
+    """
+    This model (table) only get from admin panel.
+    No plan to implement in `views.py`.
+    """
+    word = models.TextField(max_length=100)
+    is_noun = models.BooleanField(default=True)
+
+    def __str__(self):
+        return f'{self.word} ({self.is_noun})'
