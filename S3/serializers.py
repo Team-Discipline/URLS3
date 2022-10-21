@@ -10,6 +10,7 @@ class S3Serializer(serializers.ModelSerializer):
     issuer = serializers.PrimaryKeyRelatedField(many=False, read_only=True)
     s3_url = serializers.URLField(read_only=True)
     security_result = serializers.PrimaryKeyRelatedField(read_only=True)
+    short_by_words = serializers.BooleanField(read_only=False, default=True)
 
     class Meta:
         model = S3
