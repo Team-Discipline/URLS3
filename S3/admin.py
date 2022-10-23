@@ -1,4 +1,6 @@
 from django.contrib import admin
+from django.db.models import QuerySet
+from django.http import HttpRequest
 
 from S3.models import S3, S3SecurityResult, Word
 
@@ -19,3 +21,18 @@ class S3SecurityResultAdmin(admin.ModelAdmin):
 class WordAdmin(admin.ModelAdmin):
     list_display = ['id', 'word', 'is_noun']
     search_fields = ['id', 'word', 'is_noun']
+    list_filter = ['is_noun']
+    actions = ['make_noun', 'make_adj']
+    ordering = ['id', 'word']
+
+    def make_noun(self, request: HttpRequest, queryset: QuerySet):
+        updated_count = queryset.update(is_noun=True)
+        self.message_user(request, f'{updated_count}개의 단어가 명사로 변경 됨.')
+
+    make_noun.short_description = '선택한 단어들을 명사로 바꿈'
+
+    def make_adj(self, request: HttpRequest, queryset: QuerySet):
+        updated_count = queryset.update(is_noun=False)
+        self.message_user(request, f'{updated_count}개의 단어가 형용사로 변경 됨.')
+
+    make_adj.short_description = '선택한 단어들을 형용사로 바꿈'
