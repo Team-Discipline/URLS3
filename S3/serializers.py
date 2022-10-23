@@ -12,6 +12,18 @@ class S3Serializer(serializers.ModelSerializer):
     security_result = serializers.PrimaryKeyRelatedField(read_only=True)
     short_by_words = serializers.BooleanField(read_only=False, default=True)
 
+    def create(self, validated_data: dict):
+        """
+        To filter `short_by_words` field
+        because `short_by_words` is only for input data.
+        Not row data (model)
+        """
+        new_validated_data = dict()
+        for k, v in validated_data.items():
+            if k != 'short_by_words':
+                new_validated_data[k] = v
+        return S3.objects.create(**new_validated_data)
+
     class Meta:
         model = S3
         exclude = ['id', 'created_at', 'updated_at']
