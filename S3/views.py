@@ -8,8 +8,9 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework_api_key.permissions import HasAPIKey
 
-from S3.models import S3, S3SecurityResult
+from S3.models import S3, S3SecurityResult, CombinedWords
 from S3.serializers import S3Serializer
+from S3.utils.CombineWords import get_combined_words
 from S3.utils.FindUser import find_user
 from S3.utils.URLSecurityChecker import URLSecurityChecker
 
@@ -40,7 +41,17 @@ class S3CreateGetViewSet(generics.ListCreateAPIView):
         두 단어의 조합으로 url을 단축하려면 `short_by_words`에 true를 넣으면 됨.
         일반적인 hash키로 url을 단축하려면 `short_by_words`에 false를 넣으면 됨.
         """
-        shortener_url = f'https://urls3.kreimben.com/{datetime.now()}'
+        short_by_words = request.data.get('short_by_words')
+        combined_words: CombinedWords | None = None
+
+        if short_by_words:
+            print(f'{short_by_words=}')
+            combined_words: CombinedWords = get_combined_words()
+            print(f'{combined_words=}')
+            shortener_url = f'https://urls3.kreimben.com/{combined_words}'
+        else:
+            # TODO: Implement hashed url.
+            shortener_url = f'https://urls3.kreimben.com/{datetime.now()}'
 
         s = S3Serializer(data=request.data, context={'request': request})
 
