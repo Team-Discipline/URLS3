@@ -6,6 +6,7 @@ class S3Config(AppConfig):
     name = 'S3'
 
     def ready(self):
+        from . import signals
         """
         밑의 줄을 import 함으로써 `utils.words_excel`안에 있는 엑셀 파일을 불러들여
         `Word` 모델에 저장합니다.
