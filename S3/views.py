@@ -53,9 +53,9 @@ class S3CreateGetViewSet(generics.ListCreateAPIView):
             # TODO: Implement hashed url.
             shortener_url = f'https://urls3.kreimben.com/{datetime.now()}'
 
-        s = S3Serializer(data=request.data, context={'request': request})
+        serializer = self.get_serializer(data=request.data, context={'request': request})
 
-        if s.is_valid():
+        if serializer.is_valid():
             '''
             Here to inject `security` checks and some of validations.
             '''
@@ -63,15 +63,18 @@ class S3CreateGetViewSet(generics.ListCreateAPIView):
                 result: S3SecurityResult = URLSecurityChecker.check(request.data.get('target_url'))
 
                 user = find_user(request)
-                s.save(issuer=user, s3_url=shortener_url, security_result=result)
-                return Response(s.data)
+                serializer.save(issuer=user,
+                                s3_url=shortener_url,
+                                security_result=result,
+                                combined_words=combined_words)
+                return Response(serializer.data)
             except requests.exceptions.ConnectionError:
                 return Response({
                     'success': False,
                     'message': 'Can not connect with your given url!'
                 }, status=status.HTTP_400_BAD_REQUEST)
         else:
-            return Response(s.errors)
+            return Response(serializer.errors)
 
 
 class S3UpdateDeleteViewSet(generics.DestroyAPIView,
