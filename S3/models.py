@@ -46,7 +46,7 @@ class S3(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     security_result = models.OneToOneField(S3SecurityResult,
-                                           on_delete=models.SET_NULL,
+                                           on_delete=models.CASCADE,
                                            null=True,
                                            default=None,
                                            related_name='s3')
