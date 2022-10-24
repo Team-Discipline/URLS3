@@ -11,17 +11,42 @@ class S3SecurityResult(models.Model):
         verbose_name_plural = 'Security Results'
 
     def __str__(self):
-        return f'{self.s3.issuer}\'s {self.s3.target_url}'
+        if hasattr(self, 's3'):
+            return f'{self.s3.issuer if self.s3 else "None"}\'s {self.s3.target_url}'
+        else:
+            return f'NA'
+
+
+class Word(models.Model):
+    """
+    This model (table) only get from admin panel.
+    No plan to implement in `views.py`.
+    """
+    word = models.TextField(max_length=100, unique=True)
+    is_noun = models.BooleanField(default=True)
+
+    def __str__(self):
+        return f'{self.word} ({"Noun" if self.is_noun else "Adj"})'
+
+
+class CombinedWords(models.Model):
+    first_word = models.ForeignKey(Word, on_delete=models.CASCADE, related_name='first_words')
+    second_word = models.ForeignKey(Word, on_delete=models.CASCADE, related_name='second_words')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'{self.first_word.word}-{self.second_word.word}'
 
 
 class S3(models.Model):
     issuer = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='issued_s3')
     target_url = models.URLField(validators=[URLValidator])
     s3_url = models.URLField(unique=True, validators=[URLValidator])  # url that converted by URLS3.
+    combined_words = models.OneToOneField(CombinedWords, on_delete=models.CASCADE, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     security_result = models.OneToOneField(S3SecurityResult,
-                                           on_delete=models.SET_NULL,
+                                           on_delete=models.CASCADE,
                                            null=True,
                                            default=None,
                                            related_name='s3')

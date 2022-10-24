@@ -4,7 +4,7 @@ from django.utils.timezone import timedelta
 
 from analytics.models import CapturedData, UniqueVisitor
 
-print('django signal loaded!')
+print('analytics signal loaded!')
 
 
 @receiver(post_save, sender=CapturedData)
