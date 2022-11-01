@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.db.models import QuerySet
 from django.http import HttpRequest
 
-from S3.models import S3, S3SecurityResult, Word, CombinedWords
+from S3.models import S3, S3SecurityResult, Word, CombinedWords, Hash
 
 
 @admin.register(S3)
@@ -42,4 +42,11 @@ class WordAdmin(admin.ModelAdmin):
 class CombinedWordsAdmin(admin.ModelAdmin):
     list_display = ['id', 'first_word', 'second_word']
     search_fields = ['id', 'first_word', 'second_word']
+    ordering = ['id']
+
+
+@admin.register(Hash)
+class HashAdmin(admin.ModelAdmin):
+    list_display = ['id', 'origin_url', 'hash_value']
+    search_fields = ['id', 'origin_url', 'hash_value']
     ordering = ['id']

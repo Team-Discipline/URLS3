@@ -1,4 +1,5 @@
 from datetime import datetime
+from hashlib import md5
 
 import requests
 from rest_framework import throttling, generics, status
@@ -8,7 +9,7 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework_api_key.permissions import HasAPIKey
 
-from S3.models import S3, S3SecurityResult, CombinedWords
+from S3.models import S3, S3SecurityResult, CombinedWords, Hash
 from S3.serializers import S3Serializer
 from S3.utils.CombineWords import get_combined_words
 from S3.utils.FindUser import find_user
@@ -50,8 +51,19 @@ class S3CreateGetViewSet(generics.ListCreateAPIView):
             print(f'{combined_words=}')
             shortener_url = f'https://urls3.kreimben.com/{combined_words}'
         else:
-            # TODO: Implement hashed url.
-            shortener_url = f'https://urls3.kreimben.com/{datetime.now()}'
+            origin_url = request.data.get('target_url')
+            target_url = origin_url + str(datetime.now()) + request.user.username
+            print(f'{target_url}')
+            hash_value = md5(target_url.encode("UTF-8")).hexdigest()[0:6]
+            print(f'{hash_value}')
+            shortener_url = f'https://urls3.kreimben.com/{hash_value}'
+
+            h = Hash(
+                origin_url=origin_url,
+                hash_value=hash_value,
+            )
+
+            h.save()
 
         serializer = self.get_serializer(data=request.data, context={'request': request})
 
