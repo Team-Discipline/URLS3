@@ -43,7 +43,21 @@ class S3CreateGetViewSet(generics.ListCreateAPIView):
         일반적인 hash키로 url을 단축하려면 `short_by_words`에 false를 넣으면 됨.
         """
         short_by_words = request.data.get('short_by_words')
+
         combined_words: CombinedWords | None = None
+
+        target_url = request.data.get('target_url')
+        composite = target_url + str(datetime.now()) + request.user.username
+        print(f'{composite}')
+        hash_value = md5(composite.encode("UTF-8")).hexdigest()[0:6]
+        print(f'{hash_value}')
+
+        h = Hash(
+            target_url=target_url,
+            hash_value=hash_value,
+        )
+
+        h.save()
 
         if short_by_words:
             print(f'{short_by_words=}')
@@ -51,19 +65,7 @@ class S3CreateGetViewSet(generics.ListCreateAPIView):
             print(f'{combined_words=}')
             shortener_url = f'https://urls3.kreimben.com/{combined_words}'
         else:
-            origin_url = request.data.get('target_url')
-            target_url = origin_url + str(datetime.now()) + request.user.username
-            print(f'{target_url}')
-            hash_value = md5(target_url.encode("UTF-8")).hexdigest()[0:6]
-            print(f'{hash_value}')
             shortener_url = f'https://urls3.kreimben.com/{hash_value}'
-
-            h = Hash(
-                origin_url=origin_url,
-                hash_value=hash_value,
-            )
-
-            h.save()
 
         serializer = self.get_serializer(data=request.data, context={'request': request})
 
@@ -78,7 +80,9 @@ class S3CreateGetViewSet(generics.ListCreateAPIView):
                 serializer.save(issuer=user,
                                 s3_url=shortener_url,
                                 security_result=result,
-                                combined_words=combined_words)
+                                combined_words=combined_words,
+                                hashed_value=h
+                                )
                 return Response(serializer.data)
             except requests.exceptions.ConnectionError:
                 return Response({

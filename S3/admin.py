@@ -47,6 +47,6 @@ class CombinedWordsAdmin(admin.ModelAdmin):
 
 @admin.register(Hash)
 class HashAdmin(admin.ModelAdmin):
-    list_display = ['id', 'origin_url', 'hash_value']
-    search_fields = ['id', 'origin_url', 'hash_value']
+    list_display = ['id', 'target_url', 'hash_value']
+    search_fields = ['id', 'target_url', 'hash_value']
     ordering = ['id']
