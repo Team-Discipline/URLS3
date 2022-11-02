@@ -40,7 +40,7 @@ class CombinedWords(models.Model):
 
 class Hash(models.Model):
     origin_url = models.URLField(validators=[URLValidator])
-    hash_value = models.CharField(max_length=1000)
+    hash_value = models.CharField(max_length=6)
 
     def __str__(self):
         return f'{self.hash_value}'
@@ -48,12 +48,13 @@ class Hash(models.Model):
 
 class S3(models.Model):
     issuer = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='issued_s3')
+    hash = models.OneToOneField(Hash, on_delete=models.CASCADE, related_name='hash', default=None)
     target_url = models.URLField(validators=[URLValidator])
     s3_url = models.URLField(unique=True, validators=[URLValidator])  # url that converted by URLS3.
     combined_words = models.OneToOneField(CombinedWords, on_delete=models.CASCADE, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True),
-    is_active = models.BooleanField(default=True),
+    updated_at = models.DateTimeField(auto_now=True)
+    is_active = models.BooleanField(default=True)
     security_result = models.OneToOneField(S3SecurityResult,
                                            on_delete=models.CASCADE,
                                            null=True,
