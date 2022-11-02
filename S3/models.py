@@ -54,7 +54,7 @@ class S3(models.Model):
     combined_words = models.OneToOneField(CombinedWords, on_delete=models.CASCADE, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    is_active = models.BooleanField(default=True)
+    is_ban = models.BooleanField(default=False)
     security_result = models.OneToOneField(S3SecurityResult,
                                            on_delete=models.CASCADE,
                                            null=True,
