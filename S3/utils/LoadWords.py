@@ -2,36 +2,50 @@ import pandas as pd
 
 from S3.models import Word
 
+
+def delete_every_words():
+    Word.objects.all().delete()
+
+
+def __save_words(words_from_excel: [str], is_noun: bool):
+    # Remove duplicated words in row input array.
+    words_from_excel = [str(w).lower() for w in list(set(words_from_excel))]
+
+    # Check words from db and compare.
+    all_words_from_db = [w.word for w in Word.objects.all()]
+    temp = []
+    for i, v in enumerate(words_from_excel):
+        if v not in all_words_from_db:
+            temp.append(v)
+
+    words_from_excel = temp
+    del temp
+
+    for i, w in enumerate(words_from_excel):
+        word = str(w).lower()
+        try:
+            word = Word.objects.create(word=word, is_noun=is_noun)
+        except Exception as e:
+            print(f'{word} is occurring error: {e}')
+            continue
+        print(f'{word} ({i}/{len(words_from_excel)})')
+
+
 # 형용사
-adj = pd.read_excel('./S3/utils/words_excel/adj.xlsx', engine='openpyxl', usecols=[0])
-adj_list = []
-for row in adj['words']:
-    adj_list.append(row)
+def load_adj():
+    adj = pd.read_excel('./S3/utils/words_excel/adj.xlsx', engine='openpyxl', usecols=[0])
+    adj_list = []
+    for row in adj['words']:
+        adj_list.append(row)
 
-adj_list = list(set(adj_list))
-print(f'adj count: {len(adj_list)}')
+    __save_words(adj_list, is_noun=False)
 
-for w in adj_list:
-    try:
-        Word(word=w, is_noun=False).save()
-    except Exception as e:
-        print(f'{w} is occuring error: {e}')
-        continue
-    print(f'{w=} is saving')
 
 # 명사
-noun = pd.read_excel('./S3/utils/words_excel/noun.xlsx', engine='openpyxl', usecols=[0])
-noun_list = []
-for row in noun['words']:
-    noun_list.append(row)
+def load_noun():
+    noun = pd.read_excel('./S3/utils/words_excel/noun.xlsx', engine='openpyxl', usecols=[0])
+    noun_list = []
+    for row in noun['words']:
+        noun_list.append(row)
 
-adj_list = list(set(noun_list))
-print(f'noun count: {len(noun_list)}')
-
-for w in noun_list:
-    try:
-        Word(word=w, is_noun=True).save()
-    except Exception as e:
-        print(f'{w} is occuring error: {e}')
-        continue
-    print(f'{w=} is saving')
+    __save_words(noun_list, is_noun=True)
