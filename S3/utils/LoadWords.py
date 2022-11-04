@@ -4,7 +4,10 @@ from S3.models import Word
 
 
 def delete_every_words():
-    Word.objects.all().delete()
+    print('starting delete_every_words')
+    words = Word.objects.all()
+    for i, word in enumerate(words):
+        print(f'{word} is deleting! ({i})/({len(words)})')
 
 
 def __save_words(words_from_excel: [str], is_noun: bool):
