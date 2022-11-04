@@ -48,9 +48,7 @@ class S3CreateGetViewSet(generics.ListCreateAPIView):
 
         target_url = request.data.get('target_url')
         composite = target_url + str(datetime.now()) + request.user.username
-        print(f'{composite}')
         hash_value = md5(composite.encode("UTF-8")).hexdigest()[0:6]
-        print(f'{hash_value}')
 
         h = Hash(
             target_url=target_url,
@@ -60,9 +58,7 @@ class S3CreateGetViewSet(generics.ListCreateAPIView):
         h.save()
 
         if short_by_words:
-            print(f'{short_by_words=}')
             combined_words: CombinedWords = get_combined_words()
-            print(f'{combined_words=}')
             shortener_url = f'https://urls3.kreimben.com/{combined_words}'
         else:
             shortener_url = f'https://urls3.kreimben.com/{hash_value}'
