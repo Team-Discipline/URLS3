@@ -5,7 +5,7 @@ from analytics.models import CapturedData, UniqueVisitor
 
 
 class CreateCapturedDataSerializer(serializers.HyperlinkedModelSerializer):
-    s3 = serializers.PrimaryKeyRelatedField(queryset=S3.objects.all())
+    s3 = serializers.HyperlinkedRelatedField(view_name='s3', queryset=S3.objects.all())
 
     class Meta:
         model = CapturedData
