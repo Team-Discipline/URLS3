@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'geoip2',
     'rest_framework_api_key',
+    'daphne',
 
     # django
     'django.contrib.admin',
