@@ -19,3 +19,4 @@ djangorestframework-api-key
 requests
 pandas
 openpyxl
+ujson
