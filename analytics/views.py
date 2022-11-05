@@ -43,9 +43,11 @@ class CollectDataViewSet(viewsets.ModelViewSet):
 
     def create(self, request: Request, *args, **kwargs):
         """
-        s3필드에 s3주소(s3_url)를 입력 하면 됩니다.
-        s3주소란? 실제로 단축된 url을 말함.
-        제대로 된 url 주소를 입력 받지 못했을 때 403 오류가 납니다.
+        s3필드에 s3_url를 입력 하면 됩니다. 제대로 된 url 주소를 입력 받지 못했을 때 400 오류가 납니다.
+        response에 있는 `id`값이 `CapturedData`의 id값 입니다.
+        이 값을 websocket 연결 후 `captured_data`에 넣어주세요.
+        url은 `ws://127.0.0.1:8000/ws/ad_page/<str:hashed_value>/`
+        body는 `{ captured_data": id }`
         """
         ip_address = self._get_client_ip(request)
 
