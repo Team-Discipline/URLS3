@@ -1,6 +1,6 @@
 from django.contrib.gis.geoip2 import GeoIP2
 from geoip2.errors import AddressNotFoundError
-from rest_framework import viewsets, generics
+from rest_framework import viewsets, generics, status
 from rest_framework.request import Request
 from rest_framework.response import Response
 
@@ -63,12 +63,15 @@ class CollectDataViewSet(viewsets.ModelViewSet):
             latitude = None
             longitude = None
 
+        if request.data.get('s3', None) is None:
+            return Response(data={'message': 'invalid data in \"s3\"'}, status=status.HTTP_400_BAD_REQUEST)
+
         s3: str = request.data['s3']
 
         try:
             s3: S3 = S3.objects.get(s3_url=s3)
         except S3.DoesNotExist:
-            return Response(data={'message': '입력받은 url로 s3를 찾을 수 없습니다.'})
+            return Response(data={'message': '입력받은 url로 s3를 찾을 수 없습니다.'}, status=status.HTTP_404_NOT_FOUND)
 
         c = CapturedData(
             s3=s3,
@@ -85,7 +88,7 @@ class CollectDataViewSet(viewsets.ModelViewSet):
 
         c.save()
 
-        s = CreateCapturedDataSerializer(c, context={'request': request})
+        s = GetCapturedDataSerializer(c, context={'request': request})
         return Response(s.data)
 
 
