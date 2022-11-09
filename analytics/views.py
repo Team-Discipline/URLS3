@@ -1,6 +1,6 @@
 from django.contrib.gis.geoip2 import GeoIP2
 from geoip2.errors import AddressNotFoundError
-from rest_framework import viewsets, generics
+from rest_framework import viewsets, generics, status
 from rest_framework.request import Request
 from rest_framework.response import Response
 
@@ -43,9 +43,11 @@ class CollectDataViewSet(viewsets.ModelViewSet):
 
     def create(self, request: Request, *args, **kwargs):
         """
-        s3필드에 s3주소(s3_url)를 입력 하면 됩니다.
-        s3주소란? 실제로 단축된 url을 말함.
-        제대로 된 url 주소를 입력 받지 못했을 때 403 오류가 납니다.
+        s3필드에 s3_url를 입력 하면 됩니다. 제대로 된 url 주소를 입력 받지 못했을 때 400 오류가 납니다.
+        response에 있는 `id`값이 `CapturedData`의 id값 입니다.
+        이 값을 websocket 연결 후 `captured_data`에 넣어주세요.
+        url은 `ws://127.0.0.1:8000/ws/ad_page/<str:hashed_value>/`
+        body는 `{ captured_data": id }`
         """
         ip_address = self._get_client_ip(request)
 
@@ -63,12 +65,15 @@ class CollectDataViewSet(viewsets.ModelViewSet):
             latitude = None
             longitude = None
 
+        if request.data.get('s3', None) is None:
+            return Response(data={'message': 'invalid data in \"s3\"'}, status=status.HTTP_400_BAD_REQUEST)
+
         s3: str = request.data['s3']
 
         try:
             s3: S3 = S3.objects.get(s3_url=s3)
         except S3.DoesNotExist:
-            return Response(data={'message': '입력받은 url로 s3를 찾을 수 없습니다.'})
+            return Response(data={'message': '입력받은 url로 s3를 찾을 수 없습니다.'}, status=status.HTTP_404_NOT_FOUND)
 
         c = CapturedData(
             s3=s3,
@@ -85,7 +90,7 @@ class CollectDataViewSet(viewsets.ModelViewSet):
 
         c.save()
 
-        s = CreateCapturedDataSerializer(c, context={'request': request})
+        s = GetCapturedDataSerializer(c, context={'request': request})
         return Response(s.data)
 
 

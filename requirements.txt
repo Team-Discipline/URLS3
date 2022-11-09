@@ -13,9 +13,10 @@ django-cors-headers
 geoip2
 gunicorn
 uvicorn
-daphne
+channels[daphne]
 Twisted[tls,http2]
 djangorestframework-api-key
 requests
 pandas
 openpyxl
+ujson
