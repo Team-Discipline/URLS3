@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.db.models import QuerySet
 from django.http import HttpRequest
 
-from S3.models import S3, S3SecurityResult, Word, CombinedWords, Hash
+from S3.models import S3, S3SecurityResult, Word, CombinedWord, Hash
 
 
 @admin.register(S3)
@@ -38,8 +38,8 @@ class WordAdmin(admin.ModelAdmin):
     make_adj.short_description = '선택한 단어들을 형용사로 바꿈'
 
 
-@admin.register(CombinedWords)
-class CombinedWordsAdmin(admin.ModelAdmin):
+@admin.register(CombinedWord)
+class CombinedWordAdmin(admin.ModelAdmin):
     list_display = ['id', 'first_word', 'second_word']
     search_fields = ['id', 'first_word', 'second_word']
     ordering = ['id']

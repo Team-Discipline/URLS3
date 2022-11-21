@@ -1,4 +1,4 @@
-from S3.models import Word, CombinedWords
+from S3.models import Word, CombinedWord
 
 
 def __check_duplicated_combined_words(word1: str, word2: str) -> bool:
@@ -10,14 +10,14 @@ def __check_duplicated_combined_words(word1: str, word2: str) -> bool:
 
     `False` mean 'it is unique'
     """
-    words = CombinedWords.objects.filter(first_word__word__iexact=word1, second_word__word__iexact=word2)
+    words = CombinedWord.objects.filter(first_word__word__iexact=word1, second_word__word__iexact=word2)
     if words.count() > 0:
         return True
     else:
         return False
 
 
-def get_combined_words(word1: str | None = None, word2: str | None = None) -> CombinedWords:
+def get_combined_words(word1: str | None = None, word2: str | None = None) -> CombinedWord:
     while True:
         w1, w2 = Word(), Word()  # Create empty queryset
         if word1 is None:
@@ -30,4 +30,4 @@ def get_combined_words(word1: str | None = None, word2: str | None = None) -> Co
         if not __check_duplicated_combined_words(word1, word2):
             break
 
-    return CombinedWords.objects.create(first_word=w1, second_word=w2)
+    return CombinedWord.objects.create(first_word=w1, second_word=w2)

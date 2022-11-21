@@ -29,10 +29,14 @@ class Word(models.Model):
         return f'{self.word} ({"Noun" if self.is_noun else "Adj"})'
 
 
-class CombinedWords(models.Model):
+class CombinedWord(models.Model):
     first_word = models.ForeignKey(Word, on_delete=models.CASCADE, related_name='first_words')
     second_word = models.ForeignKey(Word, on_delete=models.CASCADE, related_name='second_words')
     created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = 'CombinedWord'
+        verbose_name_plural = 'CombinedWords'
 
     def __str__(self):
         return f'{self.first_word.word}-{self.second_word.word}'
@@ -51,7 +55,7 @@ class S3(models.Model):
     hashed_value = models.OneToOneField(Hash, on_delete=models.CASCADE, related_name='hash', default=None)
     target_url = models.URLField(validators=[URLValidator])
     s3_url = models.URLField(unique=True, validators=[URLValidator])  # url that converted by URLS3.
-    combined_words = models.OneToOneField(CombinedWords, on_delete=models.CASCADE, blank=True, null=True)
+    combined_words = models.OneToOneField(CombinedWord, on_delete=models.CASCADE, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     is_ban = models.BooleanField(default=False)
