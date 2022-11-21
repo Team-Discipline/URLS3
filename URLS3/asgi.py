@@ -13,18 +13,19 @@ from channels.auth import AuthMiddlewareStack
 from channels.routing import ProtocolTypeRouter, URLRouter
 from channels.security.websocket import AllowedHostsOriginValidator
 from django.core.asgi import get_asgi_application
-
-from S3 import routing
+from django.urls import path
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'URLS3.settings')
 
-# Initialize Django ASGI application early to ensure the AppRegistry
-# is populated before importing code that may import ORM models.
 django_asgi_app = get_asgi_application()
+
+from S3.consumers import AdPageConsumer
 
 application = ProtocolTypeRouter({
     "http": django_asgi_app,
     "websocket": AllowedHostsOriginValidator(
-        AuthMiddlewareStack(URLRouter(routing.websocket_urlpatterns))
+        AuthMiddlewareStack(URLRouter([
+            path('ws/ad_page/<str:hashed_value>/', AdPageConsumer.as_asgi())
+        ]))
     ),
 })
