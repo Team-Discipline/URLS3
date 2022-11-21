@@ -1,4 +1,4 @@
-FROM python:3.10-bullseye
+FROM python:3.11-bullseye
 
 WORKDIR app
 
@@ -9,8 +9,6 @@ EXPOSE 8000
 RUN apt-get update && \
     apt-get -y upgrade && \
     pip install --upgrade pip && \
-    pip install -r requirements.txt
+    pip install -r requirements.txt --upgrade
 
-#CMD ["gunicorn", "xlack.asgi:application", "-k", "uvicorn.workers.UvicornWorker", "-b", "0.0.0.0", "-p", "8000"]
-#CMD ["gunicorn", "xlack.wsgi"]
-#CMD ["daphne", "-b", "0.0.0.0", "-p", "8000", "URLS3.wsgi:application"]
+CMD ["daphne", "-b", "0.0.0.0", "-p", "8000", "URLS3.asgi:application", "-v", "3"]
