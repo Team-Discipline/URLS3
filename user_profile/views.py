@@ -1,4 +1,4 @@
-from rest_framework import viewsets, permissions
+from rest_framework import viewsets, permissions, status
 from rest_framework.parsers import MultiPartParser
 from rest_framework.request import Request
 from rest_framework.response import Response
@@ -30,6 +30,16 @@ class ImageViewSet(viewsets.ModelViewSet):
         except Image.DoesNotExist:
             ...
         return super().create(request, *args, **kwargs)
+
+    def list(self, request, *args, **kwargs):
+        try:
+            print(f'{self.request.user=}')
+            image = Image.objects.get(uploaded_by=self.request.user)
+            print(f'{image=}')
+            s: ImageSerializer = self.get_serializer(image)
+            return Response(s.data, status=status.HTTP_200_OK)
+        except Image.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
 
 
 class UserProfileViewSet(viewsets.ModelViewSet):
@@ -63,3 +73,9 @@ class UserProfileViewSet(viewsets.ModelViewSet):
         profile.save()
         s = UserProfileSerializer(profile, context={'request': request})
         return Response(s.data)
+
+    def retrieve(self, request, *args, **kwargs):
+        """
+        **사용 금지**
+        """
+        return Response(status=status.HTTP_404_NOT_FOUND)
