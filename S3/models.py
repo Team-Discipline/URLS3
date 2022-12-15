@@ -52,10 +52,12 @@ class Hash(models.Model):
 
 class S3(models.Model):
     issuer = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='issued_s3')
-    hashed_value = models.OneToOneField(Hash, on_delete=models.CASCADE, related_name='hash', default=None)
+    hashed_value = models.OneToOneField(Hash, on_delete=models.CASCADE, related_name='hash', default=None,
+                                        related_query_name='s3')
     target_url = models.URLField(validators=[URLValidator])
     s3_url = models.URLField(unique=True, validators=[URLValidator])  # url that converted by URLS3.
-    combined_words = models.OneToOneField(CombinedWord, on_delete=models.CASCADE, blank=True, null=True)
+    combined_words = models.OneToOneField(CombinedWord, on_delete=models.CASCADE, blank=True, null=True,
+                                          related_name='s3')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     is_ban = models.BooleanField(default=False)
