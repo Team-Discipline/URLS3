@@ -2,7 +2,9 @@ from datetime import datetime
 from hashlib import md5
 
 import requests
+from django.http import HttpResponse, JsonResponse
 from rest_framework import throttling, generics, status
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
@@ -122,3 +124,27 @@ class S3UpdateDeleteViewSet(generics.DestroyAPIView,
 
         s3.delete()
         return Response({'success': True, 'message': 'Successfully deleted!'}, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+@permission_classes([])
+def find_hash_by_combined_words(request: Request):
+    """
+    body에 { "first_word": {first}, "second_word": {second} }를 입력하면 됩니다.
+    단어 조합을 찾지 못한 경우에는 404 코드만 제공됩니다.
+    """
+    first_word = request.data.get('first_word')
+    second_word = request.data.get('second_word')
+
+    print(f'{first_word=} {second_word=}')
+
+    try:
+        combined_word = CombinedWord.objects.get(first_word__word=first_word, second_word__word=second_word)
+    except CombinedWord.DoesNotExist:
+        return HttpResponse(status=status.HTTP_404_NOT_FOUND)
+
+    if combined_word:
+        value = combined_word.s3.hashed_value.hash_value
+        print(f'{value=}')
+
+        return JsonResponse(status=status.HTTP_200_OK, data={'hashed_value': value})
