@@ -139,7 +139,8 @@ def find_hash_by_combined_words(request: Request):
     print(f'{first_word=} {second_word=}')
 
     try:
-        combined_word = CombinedWord.objects.get(first_word__word=first_word, second_word__word=second_word)
+        combined_word = CombinedWord.objects.prefetch_related('s3') \
+            .get(first_word__word=first_word, second_word__word=second_word)
     except CombinedWord.DoesNotExist:
         return HttpResponse(status=status.HTTP_404_NOT_FOUND)
 
