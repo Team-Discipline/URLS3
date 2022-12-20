@@ -98,14 +98,16 @@ class S3UpdateDeleteViewSet(generics.DestroyAPIView,
     permission_classes = [IsAuthenticated | HasAPIKey]
     throttle_classes = [throttling.UserRateThrottle]
     http_method_names = ['patch', 'delete']
+    lookup_field = 'hashed_value'
 
     def update(self, request, *args, **kwargs):
-        s3_id = kwargs['s3_id']
+        print(f'{kwargs=}')
+        hashed_value = kwargs['hashed_value']
 
-        if not s3_id:
+        if not hashed_value:
             return Response({'success': False, 'message': 'ID is not filled.'}, status=status.HTTP_404_NOT_FOUND)
 
-        s3 = get_object_or_404(S3, pk=s3_id)
+        s3 = get_object_or_404(S3, hashed_value__hash_value=hashed_value)
 
         s3.target_url = request.data.get('target_url')
         s3.save()
@@ -115,12 +117,15 @@ class S3UpdateDeleteViewSet(generics.DestroyAPIView,
         return Response(s.data)
 
     def delete(self, request: Request, *args, **kwargs):
-        s3_id = kwargs['s3_id']
+        hashed_value = kwargs['hashed_value']
 
-        if not s3_id:
+        if not hashed_value:
             return Response({'success': False, 'message': 'ID is not filled.'}, status=status.HTTP_404_NOT_FOUND)
 
-        s3 = get_object_or_404(S3, pk=s3_id)
+        s3 = get_object_or_404(S3, hashed_value__hash_value=hashed_value)
+
+        if s3.issuer != request.user:
+            return Response({'message': "Not your S3 issued by you."}, status=status.HTTP_400_BAD_REQUEST)
 
         s3.delete()
         return Response({'success': True, 'message': 'Successfully deleted!'}, status=status.HTTP_200_OK)
