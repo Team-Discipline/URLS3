@@ -78,7 +78,7 @@ class CollectDataViewSet(viewsets.ModelViewSet):
         c = CapturedData(
             s3=s3,
             ip_address=ip_address,
-            js_reqeust_time_UTC=request.data.get('js_reqeust_time_UTC', None),
+            js_request_time_UTC=request.data.get('js_request_time_UTC', None),
             page_loaded_time=request.data.get('page_loaded_time', None),
             page_leave_time=request.data.get('page_leave_time', None),
             referer_url=request.data.get('referer_url', None),

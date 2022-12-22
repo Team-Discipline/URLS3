@@ -8,7 +8,7 @@ class CapturedData(models.Model):
     # User's ip address.
     ip_address = models.GenericIPAddressField()
     # When JS collector is first loaded.
-    js_reqeust_time_UTC = models.DateTimeField()
+    js_request_time_UTC = models.DateTimeField()
     # When ads page is fully loaded.
     page_loaded_time = models.DateTimeField()
     # When user is trying to leave ads page. `window.onbeforeunload`
