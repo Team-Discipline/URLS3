@@ -81,6 +81,8 @@ class S3CreateGetViewSet(generics.ListCreateAPIView):
                                 combined_words=combined_words,
                                 hashed_value=h
                                 )
+                serializer.short_by_words = short_by_words
+                serializer.save()
                 return Response(serializer.data)
             except requests.exceptions.ConnectionError:
                 return Response({
