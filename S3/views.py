@@ -133,7 +133,7 @@ class S3UpdateDeleteViewSet(generics.DestroyAPIView,
         return Response({'success': True, 'message': 'Successfully deleted!'}, status=status.HTTP_200_OK)
 
 
-@api_view(['GET'])
+@api_view(['POST'])
 @permission_classes([])
 def find_hash_by_combined_words(request: Request):
     """
