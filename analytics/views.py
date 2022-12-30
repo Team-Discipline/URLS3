@@ -16,7 +16,7 @@ class AnalyticsViewSet(generics.ListAPIView):
     queryset = CapturedData.objects.all()
     serializer_class = GetCapturedDataSerializer
     http_method_names = ['get']
-    lookup_field = 's3_id'  # That doesn't work! I don't even know...
+    lookup_field = 's3_id'
 
     def get_queryset(self):
         return CapturedData.objects.filter(s3_id=self.kwargs['s3_id'])

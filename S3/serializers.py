@@ -11,7 +11,7 @@ class S3Serializer(serializers.ModelSerializer):
     s3_url = serializers.URLField(read_only=True)
     security_result = serializers.PrimaryKeyRelatedField(read_only=True)
     short_by_words = serializers.BooleanField(read_only=False, default=True)
-    hashed_value = serializers.PrimaryKeyRelatedField(many=False, read_only=True)
+    hashed_value = serializers.CharField(read_only=True)
 
     def create(self, validated_data: dict):
         """

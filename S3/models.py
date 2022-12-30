@@ -68,4 +68,4 @@ class S3(models.Model):
                                            related_name='s3')
 
     def __str__(self):
-        return f'{self.issuer}\'s shorten {self.target_url}'
+        return f'{self.issuer}\'s shorten {self.target_url} ({self.id})'

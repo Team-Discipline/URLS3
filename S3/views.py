@@ -79,7 +79,7 @@ class S3CreateGetViewSet(generics.ListCreateAPIView):
                                 s3_url=shortener_url,
                                 security_result=result,
                                 combined_words=combined_words,
-                                hashed_value=h
+                                hashed_value=h.hash_value
                                 )
                 serializer.short_by_words = short_by_words
                 serializer.save()
