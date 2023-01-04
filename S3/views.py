@@ -43,6 +43,7 @@ class S3CreateGetViewSet(generics.ListCreateAPIView):
         Here to generate S3 shortener url.
         두 단어의 조합으로 url을 단축하려면 `short_by_words`에 true를 넣으면 됨.
         일반적인 hash키로 url을 단축하려면 `short_by_words`에 false를 넣으면 됨.
+        문서에서 테스트 할 때 기본으로 `hashed_value`값 들어가는데, 이거 완전히 지우고 (기존처럼) request 보내면 됨.
         """
         short_by_words = request.data.get('short_by_words')
 
@@ -79,7 +80,7 @@ class S3CreateGetViewSet(generics.ListCreateAPIView):
                                 s3_url=shortener_url,
                                 security_result=result,
                                 combined_words=combined_words,
-                                hashed_value=h.hash_value
+                                hashed_value=h
                                 )
                 serializer.short_by_words = short_by_words
                 serializer.save()

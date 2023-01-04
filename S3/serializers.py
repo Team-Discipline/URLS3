@@ -1,6 +1,13 @@
 from rest_framework import serializers
 
-from S3.models import S3
+from S3.models import S3, Hash
+
+
+class HashSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Hash
+        fields = '__all__'
+        read_only_fields = ['id', 'target_url', 'hash_value']
 
 
 class S3Serializer(serializers.ModelSerializer):
@@ -11,7 +18,7 @@ class S3Serializer(serializers.ModelSerializer):
     s3_url = serializers.URLField(read_only=True)
     security_result = serializers.PrimaryKeyRelatedField(read_only=True)
     short_by_words = serializers.BooleanField(read_only=False, default=True)
-    hashed_value = serializers.CharField(read_only=True)
+    hashed_value = HashSerializer(read_only=True)
 
     def create(self, validated_data: dict):
         """

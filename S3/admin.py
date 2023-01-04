@@ -9,6 +9,8 @@ from S3.models import S3, S3SecurityResult, Word, CombinedWord, Hash
 class S3Admin(admin.ModelAdmin):
     list_display = ['id', 'issuer', 's3_url', 'hashed_value', 'target_url', 'created_at']
     search_fields = ['id', 'issuer', 's3_url', 'target_url', 'hashed_value']
+    list_filter = ['issuer']
+    list_select_related = ['issuer']
 
 
 @admin.register(S3SecurityResult)
