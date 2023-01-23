@@ -10,15 +10,35 @@ class HashSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'target_url', 'hash_value']
 
 
-class S3Serializer(serializers.ModelSerializer):
+class S3CreateSerializer(serializers.Serializer):
     """
-    When needed to s3. (just usual case)
+    It is just kind of form when generate S3.
+    """
+    target_url = serializers.URLField()
+    short_by_words = serializers.BooleanField()
+
+    def create(self, validated_data):
+        pass
+
+    def update(self, instance, validated_data):
+        pass
+
+
+class S3GetSerializer(serializers.ModelSerializer):
+    """
+    This is real serializer about S3 object.
     """
     issuer = serializers.PrimaryKeyRelatedField(many=False, read_only=True)
     s3_url = serializers.URLField(read_only=True)
     security_result = serializers.PrimaryKeyRelatedField(read_only=True)
-    short_by_words = serializers.BooleanField(read_only=False, default=True)
+    short_by_words = serializers.SerializerMethodField()
     hashed_value = HashSerializer(read_only=True)
+
+    def get_short_by_words(self, obj: S3):
+        if '-' in obj.s3_url:
+            return True
+        else:
+            return False
 
     def create(self, validated_data: dict):
         """
@@ -34,7 +54,7 @@ class S3Serializer(serializers.ModelSerializer):
 
     class Meta:
         model = S3
-        exclude = ['created_at', 'updated_at', 'combined_words', 'is_ban']
+        exclude = ['updated_at', 'combined_words']
 
 
 class S3HyperlinkedSerializer(serializers.HyperlinkedModelSerializer):

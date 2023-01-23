@@ -3,6 +3,8 @@ from hashlib import md5
 
 import requests
 from django.http import HttpResponse, JsonResponse
+from drf_yasg import openapi
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework import throttling, generics, status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.generics import get_object_or_404
@@ -12,7 +14,7 @@ from rest_framework.response import Response
 from rest_framework_api_key.permissions import HasAPIKey
 
 from S3.models import S3, S3SecurityResult, CombinedWord, Hash
-from S3.serializers import S3Serializer
+from S3.serializers import S3CreateSerializer, S3GetSerializer
 from S3.utils.CombineWord import get_combined_words
 from S3.utils.FindUser import find_user
 from S3.utils.URLSecurityChecker import URLSecurityChecker
@@ -23,7 +25,7 @@ class S3CreateGetViewSet(generics.ListCreateAPIView):
     When you generate S3.
     """
     queryset = S3.objects.all()
-    serializer_class = S3Serializer
+    serializer_class = S3GetSerializer
     permission_classes = [IsAuthenticated | HasAPIKey]
     throttle_classes = [throttling.UserRateThrottle]
     http_method_names = ['get', 'post']
@@ -38,6 +40,7 @@ class S3CreateGetViewSet(generics.ListCreateAPIView):
 
         return Response(s.data)
 
+    @swagger_auto_schema(request_body=S3CreateSerializer, responses={201: openapi.Response('', S3GetSerializer)})
     def post(self, request: Request, *args, **kwargs):
         """
         Here to generate S3 shortener url.
@@ -76,15 +79,13 @@ class S3CreateGetViewSet(generics.ListCreateAPIView):
                 result: S3SecurityResult = URLSecurityChecker.check(request.data.get('target_url'))
 
                 user = find_user(request)
+                serializer.short_by_words = short_by_words
                 serializer.save(issuer=user,
                                 s3_url=shortener_url,
                                 security_result=result,
                                 combined_words=combined_words,
-                                hashed_value=h
-                                )
-                serializer.short_by_words = short_by_words
-                serializer.save()
-                return Response(serializer.data)
+                                hashed_value=h)
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
             except requests.exceptions.ConnectionError:
                 return Response({
                     'success': False,
@@ -97,7 +98,7 @@ class S3CreateGetViewSet(generics.ListCreateAPIView):
 class S3UpdateDeleteViewSet(generics.DestroyAPIView,
                             generics.UpdateAPIView):
     queryset = S3.objects.all()
-    serializer_class = S3Serializer
+    serializer_class = S3CreateSerializer
     permission_classes = [IsAuthenticated | HasAPIKey]
     throttle_classes = [throttling.UserRateThrottle]
     http_method_names = ['patch', 'delete']

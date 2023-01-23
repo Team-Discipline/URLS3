@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from S3.models import S3
-from S3.serializers import S3Serializer
+from S3.serializers import S3CreateSerializer
 from analytics.models import CapturedData, UniqueVisitor
 
 
@@ -15,7 +15,7 @@ class CreateCapturedDataSerializer(serializers.HyperlinkedModelSerializer):
 
 class GetCapturedDataSerializer(serializers.ModelSerializer):
     ip_address = serializers.IPAddressField()
-    s3 = S3Serializer(many=False, read_only=True)
+    s3 = S3CreateSerializer(many=False, read_only=True)
 
     class Meta:
         model = CapturedData
