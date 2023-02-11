@@ -1,4 +1,5 @@
 from django.http import HttpResponse
+from django.shortcuts import get_list_or_404
 from rest_framework import viewsets, permissions, status
 from rest_framework.parsers import MultiPartParser
 from rest_framework.request import Request
@@ -33,12 +34,16 @@ class ImageViewSet(viewsets.ModelViewSet):
         return super().create(request, *args, **kwargs)
 
     def list(self, request, *args, **kwargs):
-        try:
-            image = Image.objects.get(uploaded_by=self.request.user)
-            s: ImageSerializer = self.get_serializer(image)
-            return Response(s.data, status=status.HTTP_200_OK)
-        except Image.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
+        image = list(get_list_or_404(Image, uploaded_by=self.request.user))
+        images = image
+        image = images.pop()
+        if len(images) > 0:
+            for i in images:
+                i: Image
+                i.delete()
+
+        s: ImageSerializer = self.get_serializer(image)
+        return Response(s.data)
 
 
 class UserProfileViewSet(viewsets.ModelViewSet):
