@@ -6,6 +6,7 @@ from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 from rest_framework import permissions
 
+from URLS3 import settings
 from analytics.views import CollectDataViewSet
 
 schema_view = get_schema_view(
@@ -14,6 +15,7 @@ schema_view = get_schema_view(
         default_version='0.1.0',
         description="Make URL Shortener, Securer, Sexier."
     ),
+    url='https://api.urls3.kreimben.com/docs/' if not settings.DEBUG else None,
     public=False,
     permission_classes=[permissions.IsAuthenticated],
 )
