@@ -9,7 +9,7 @@ from analytics.models import CapturedData, UniqueVisitor
 from analytics.serializers import CreateCapturedDataSerializer, GetCapturedDataSerializer, UniqueVisitorSerializer
 
 
-class AnalyticsViewSet(generics.ListAPIView):
+class AnalyticsView(generics.ListAPIView):
     """
     This is only for when user requested urls' analytics data.
     """
@@ -19,7 +19,9 @@ class AnalyticsViewSet(generics.ListAPIView):
     lookup_field = 's3_id'
 
     def get_queryset(self):
-        return CapturedData.objects.filter(s3_id=self.kwargs['s3_id'])
+        return CapturedData.objects \
+            .select_related('s3') \
+            .filter(s3_id=self.kwargs['s3_id'])
 
 
 class CollectDataViewSet(viewsets.ModelViewSet):
