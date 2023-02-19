@@ -22,7 +22,7 @@ class Word(models.Model):
     This model (table) only get from admin panel.
     No plan to implement in `views.py`.
     """
-    word = models.TextField(max_length=100, unique=True)
+    word = models.CharField(max_length=100, unique=True)
     is_noun = models.BooleanField(default=True)
 
     def __str__(self):
